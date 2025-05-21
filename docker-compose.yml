@@ -1,0 +1,56 @@
+services:
+  backend-staging:
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile
+    profiles: [ 'backend' ]
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+
+  backend-dev:
+    build:
+      context: ./
+      dockerfile: ./backend/Dockerfile.dev
+    develop:
+      watch:
+        - action: rebuild
+          path: ./package.json
+    profiles: [ 'dev' ]
+    ports:
+      - 8080:8080
+    volumes:
+      - /app/dist
+      - /app/node_modules
+      - './:/app/'
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_ADDRESS=${POSTGRES_ADDRESS:-172.16.100.201}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+    networks:
+      dev-network:
+        ipv4_address: 172.16.100.100
+
+  db-dev:
+    image: postgres:17-alpine
+    env_file:
+      - .env
+    networks:
+      dev-network:
+        ipv4_address: 172.16.100.201
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
+
+
+networks:
+  dev-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.100.0/24

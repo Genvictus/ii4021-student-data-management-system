@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch app.ts",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.21",
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "tsup": {
+    "entry": [
+      "app.ts"
+    ],
+    "outDir": "dist",
+    "target": "esNext",
+    "sourcemap": true,
+    "clean": true,
+    "dts": true,
+    "splitting": false,
+    "skipNodeModulesBundle": true
+  }
+}

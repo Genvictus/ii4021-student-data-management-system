@@ -1,0 +1,12 @@
+Dockerfile*
+*compose*.ya?ml
+.dockerignore
+*.env*
+
+node_modules
+npm-debug.log
+# generated/prisma
+
+README.md
+.git
+.gitignore
