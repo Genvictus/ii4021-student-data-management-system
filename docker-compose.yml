@@ -1,0 +1,74 @@
+services:
+  # backend-staging:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./backend/Dockerfile
+  #   profiles: [ 'backend' ]
+  #   ports:
+  #     - 3000:3000
+  #   env_file:
+  #     - .env
+
+  # backend-dev:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./backend/Dockerfile.dev
+  #   develop:
+  #     watch:
+  #       - action: rebuild
+  #         path: ./package.json
+  #   profiles: [ 'dev' ]
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - /app/dist
+  #     - /app/node_modules
+  #     - './:/app/'
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - POSTGRES_ADDRESS=${POSTGRES_ADDRESS:-172.16.100.201}
+  #     - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+  #   networks:
+  #     dev-network:
+  #       ipv4_address: 172.16.100.100
+
+  postgres-dev:
+    profiles: [ 'dev' ]
+    image: postgres:17-alpine
+    networks:
+      dev-network:
+        ipv4_address: 172.16.100.201
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+
+  pgadmin:
+    profiles: [ 'dev' ]
+    image: dpage/pgadmin4:9.3
+    networks:
+      dev-network:
+        ipv4_address: 172.16.100.202
+    ports:
+      - 15432:80
+    volumes:
+      - ./postgres/pgadmin/servers_dev.json:/pgadmin4/servers.json
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-dev@mail.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-development}
+    depends_on:
+      - postgres-dev
+
+volumes:
+  postgres_data:
+
+
+networks:
+  dev-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.100.0/24

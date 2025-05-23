@@ -1,0 +1,16 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Dev Postgres",
+            "Group": "Develop",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "172.16.100.201",
+            "MaintenanceDB": "postgres",
+            "ConnectionParameters": {
+                "sslmode": "disable",
+                "connect_timeout": 10
+            }
+        }
+    }
+}
