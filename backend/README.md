@@ -11,12 +11,12 @@ Requirements:
 
 2. Set up public/private key pair for jwt signing
     ```
+    mkdir .secrets
+    ```
+    ```
     openssl genrsa -out .secrets/private_key.pem 2048
     ```
 
-    ```
-    openssl rsa -in .secrets/private_key.pem -pubout -out .secrets/public_key.pem
-    ```
 
     ```
     openssl req -new -x509 -key .secrets/private_key.pem -out .secrets/certificate.pem -days 365 -subj "/CN=JWT-Signing"
