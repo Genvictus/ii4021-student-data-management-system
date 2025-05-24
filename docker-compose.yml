@@ -35,6 +35,8 @@ services:
 
   postgres-dev:
     profiles: [ 'dev' ]
+    ports:
+      - 5433:5432
     image: postgres:17-alpine
     networks:
       dev-network:
