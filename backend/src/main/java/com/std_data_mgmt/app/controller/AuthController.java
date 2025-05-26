@@ -16,8 +16,8 @@ import com.std_data_mgmt.app.dto.LoginRequest;
 import com.std_data_mgmt.app.dto.LoginResponse;
 import com.std_data_mgmt.app.dto.RegisterRequest;
 import com.std_data_mgmt.app.entity.User;
-import com.std_data_mgmt.app.entity.Role;
-import com.std_data_mgmt.app.security.JwtKeyProvider;
+import com.std_data_mgmt.app.enums.Role;
+import com.std_data_mgmt.app.security.jwt.JwtKeyProvider;
 import com.std_data_mgmt.app.service.AuthService;
 
 import io.jsonwebtoken.Jwts;

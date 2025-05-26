@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.entity;
+package com.std_data_mgmt.app.enums;
 
 public enum Role {
     STUDENT("STUDENT"),

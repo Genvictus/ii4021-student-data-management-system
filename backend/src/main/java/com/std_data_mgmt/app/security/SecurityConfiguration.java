@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.std_data_mgmt.app.security.jwt.JwtAuthenticationFilter;
+
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfiguration {

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.std_data_mgmt.app.entity.DemoEntity;
-import com.std_data_mgmt.app.entity.Role;
-import com.std_data_mgmt.app.rbac.RequiresRole;
+import com.std_data_mgmt.app.enums.Role;
+import com.std_data_mgmt.app.security.rbac.RequiresRole;
 import com.std_data_mgmt.app.service.DemoService;
 
 @RestController

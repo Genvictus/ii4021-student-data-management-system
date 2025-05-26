@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.security;
+package com.std_data_mgmt.app.security.jwt;
 
 import java.io.IOException;
 import java.util.List;

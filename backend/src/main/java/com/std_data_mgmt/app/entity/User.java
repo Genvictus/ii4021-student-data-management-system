@@ -1,4 +1,6 @@
 package com.std_data_mgmt.app.entity;
+import com.std_data_mgmt.app.enums.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

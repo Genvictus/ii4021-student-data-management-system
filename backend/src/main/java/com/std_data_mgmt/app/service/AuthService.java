@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.std_data_mgmt.app.entity.Role;
 import com.std_data_mgmt.app.entity.User;
+import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.repository.UserRepository;
 
 @Service

@@ -1,10 +1,12 @@
-package com.std_data_mgmt.app.rbac;
+package com.std_data_mgmt.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.std_data_mgmt.app.security.rbac.RoleAuthorizationInterceptor;
 
 
 @Configuration

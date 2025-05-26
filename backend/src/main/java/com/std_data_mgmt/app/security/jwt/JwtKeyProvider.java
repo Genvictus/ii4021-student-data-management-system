@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.security;
+package com.std_data_mgmt.app.security.jwt;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;

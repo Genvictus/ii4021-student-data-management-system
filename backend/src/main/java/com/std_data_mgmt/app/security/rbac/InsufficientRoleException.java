@@ -1,9 +1,9 @@
-package com.std_data_mgmt.app.rbac;
+package com.std_data_mgmt.app.security.rbac;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import com.std_data_mgmt.app.entity.Role;
+import com.std_data_mgmt.app.enums.Role;
 
 import lombok.Getter;
 
