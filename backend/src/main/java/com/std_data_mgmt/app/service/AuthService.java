@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.std_data_mgmt.app.entity.Role;
 import com.std_data_mgmt.app.entity.User;
-import com.std_data_mgmt.app.entity.UserRole;
 import com.std_data_mgmt.app.repository.UserRepository;
 
 @Service
@@ -24,7 +24,7 @@ public class AuthService {
         String email,
         String rawPassword,
         String fullName,
-        UserRole role,
+        Role role,
         String publicKey
     ) throws IllegalArgumentException{
         if (userRepository.findByEmail(email).isPresent()) {

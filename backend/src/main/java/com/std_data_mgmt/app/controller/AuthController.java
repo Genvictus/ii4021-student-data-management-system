@@ -16,7 +16,7 @@ import com.std_data_mgmt.app.dto.LoginRequest;
 import com.std_data_mgmt.app.dto.LoginResponse;
 import com.std_data_mgmt.app.dto.RegisterRequest;
 import com.std_data_mgmt.app.entity.User;
-import com.std_data_mgmt.app.entity.UserRole;
+import com.std_data_mgmt.app.entity.Role;
 import com.std_data_mgmt.app.security.JwtKeyProvider;
 import com.std_data_mgmt.app.service.AuthService;
 
@@ -50,7 +50,7 @@ public class AuthController {
                 request.getEmail(),
                 request.getPassword(),
                 request.getFullName(),
-                UserRole.valueOf(request.getRole().toUpperCase()),
+                Role.valueOf(request.getRole().toUpperCase()),
                 request.getPublicKey()
             );
             return new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);

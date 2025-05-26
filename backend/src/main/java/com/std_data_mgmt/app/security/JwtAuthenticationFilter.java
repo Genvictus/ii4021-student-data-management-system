@@ -25,7 +25,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component
-public class JwtAuthenticationFilter implements  Filter {
+public class JwtAuthenticationFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
 

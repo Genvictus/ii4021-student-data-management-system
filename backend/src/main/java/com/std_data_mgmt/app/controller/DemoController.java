@@ -3,7 +3,6 @@ package com.std_data_mgmt.app.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.std_data_mgmt.app.entity.DemoEntity;
+import com.std_data_mgmt.app.entity.Role;
+import com.std_data_mgmt.app.rbac.RequiresRole;
 import com.std_data_mgmt.app.service.DemoService;
 
 @RestController
@@ -37,18 +38,6 @@ public class DemoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasRole('STUDENT')")
-    @GetMapping("/student-only")
-    public String testRole() {
-        return "API for student role";
-    }
-
-    @GetMapping("/check")
-    public String check() {
-        return "OK";
-    }
-
-
     @PostMapping
     public DemoEntity create(@RequestBody DemoEntity entity) {
         return demoService.create(entity);
@@ -64,5 +53,28 @@ public class DemoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         return demoService.delete(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/check")
+    public String check() {
+        return "OK";
+    }
+
+    @RequiresRole(Role.STUDENT)
+    @GetMapping("/student-only")
+    public String studentOnly2() {
+        return "API for STUDENT role";
+    }
+
+    @RequiresRole(Role.HOD)
+    @GetMapping("/hod-only")
+    public String hodOnly() {
+        return "API for HOD role";
+    }
+
+    @RequiresRole(Role.SUPERVISOR)
+    @GetMapping("/supervisor-only")
+    public String supervisorOnly() {
+        return "API for SUPERVISOR role";
     }
 }
