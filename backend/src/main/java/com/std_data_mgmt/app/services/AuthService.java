@@ -1,13 +1,13 @@
-package com.std_data_mgmt.app.service;
+package com.std_data_mgmt.app.services;
 
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.std_data_mgmt.app.entity.User;
+import com.std_data_mgmt.app.entities.User;
 import com.std_data_mgmt.app.enums.Role;
-import com.std_data_mgmt.app.repository.UserRepository;
+import com.std_data_mgmt.app.repositories.UserRepository;
 
 @Service
 public class AuthService {

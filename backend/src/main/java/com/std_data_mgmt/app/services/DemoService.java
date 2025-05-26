@@ -1,12 +1,12 @@
-package com.std_data_mgmt.app.service;
+package com.std_data_mgmt.app.services;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.std_data_mgmt.app.entity.DemoEntity;
-import com.std_data_mgmt.app.repository.DemoRepository;
+import com.std_data_mgmt.app.entities.DemoEntity;
+import com.std_data_mgmt.app.repositories.DemoRepository;
 
 @Service
 public class DemoService {

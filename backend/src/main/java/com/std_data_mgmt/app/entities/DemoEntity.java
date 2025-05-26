@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.entity;
+package com.std_data_mgmt.app.entities;
 
 public class DemoEntity {
     private Long id;

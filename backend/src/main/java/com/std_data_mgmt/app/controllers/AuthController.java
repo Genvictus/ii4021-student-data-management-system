@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.controller;
+package com.std_data_mgmt.app.controllers;
 
 import java.security.PrivateKey;
 import java.util.Date;
@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.std_data_mgmt.app.dto.LoginRequest;
-import com.std_data_mgmt.app.dto.LoginResponse;
-import com.std_data_mgmt.app.dto.RegisterRequest;
-import com.std_data_mgmt.app.entity.User;
+import com.std_data_mgmt.app.dtos.LoginRequest;
+import com.std_data_mgmt.app.dtos.LoginResponse;
+import com.std_data_mgmt.app.dtos.RegisterRequest;
+import com.std_data_mgmt.app.entities.User;
 import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.security.jwt.JwtKeyProvider;
-import com.std_data_mgmt.app.service.AuthService;
+import com.std_data_mgmt.app.services.AuthService;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

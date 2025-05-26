@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.exception;
+package com.std_data_mgmt.app.exception_handlers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

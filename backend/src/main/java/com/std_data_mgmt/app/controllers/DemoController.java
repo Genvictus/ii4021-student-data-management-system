@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.controller;
+package com.std_data_mgmt.app.controllers;
 
 import java.util.List;
 
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.std_data_mgmt.app.entity.DemoEntity;
+import com.std_data_mgmt.app.entities.DemoEntity;
 import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.security.rbac.RequiresRole;
-import com.std_data_mgmt.app.service.DemoService;
+import com.std_data_mgmt.app.services.DemoService;
 
 @RestController
 @RequestMapping("/api/v1/demo")

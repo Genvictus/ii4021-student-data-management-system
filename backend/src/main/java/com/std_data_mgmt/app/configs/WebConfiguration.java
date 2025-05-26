@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.config;
+package com.std_data_mgmt.app.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import com.std_data_mgmt.app.security.rbac.RoleAuthorizationInterceptor;
 
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfiguration implements WebMvcConfigurer {
     
     @Autowired
     private RoleAuthorizationInterceptor roleAuthorizationInterceptor;

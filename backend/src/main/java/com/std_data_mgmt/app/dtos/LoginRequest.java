@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.dto;
+package com.std_data_mgmt.app.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
-    private String userId;
+public class LoginRequest {
     private String email;
-    private String fullName;
-    private String role;
-    private String message;
+    private String password;
 }

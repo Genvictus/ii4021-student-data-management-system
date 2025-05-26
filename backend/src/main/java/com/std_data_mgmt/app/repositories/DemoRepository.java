@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app.repository;
+package com.std_data_mgmt.app.repositories;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.std_data_mgmt.app.entity.DemoEntity;
+import com.std_data_mgmt.app.entities.DemoEntity;
 
 import jakarta.annotation.PostConstruct;
 
