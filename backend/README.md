@@ -37,6 +37,11 @@ Requirements:
     export $(cat .env | xargs)
     ```
 
+4. Start db containers
+    ```
+    docker compose --profile dev up
+    ```
+
 ## Development
 
 1. To add dependency:

@@ -3,6 +3,7 @@ package com.std_data_mgmt.app.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,7 @@ import com.std_data_mgmt.app.entity.DemoEntity;
 import com.std_data_mgmt.app.service.DemoService;
 
 @RestController
-@RequestMapping("/api/demo")
+@RequestMapping("/api/v1/demo")
 public class DemoController {
     private final DemoService demoService;
 
@@ -35,6 +36,18 @@ public class DemoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/student-only")
+    public String testRole() {
+        return "API for student role";
+    }
+
+    @GetMapping("/check")
+    public String check() {
+        return "OK";
+    }
+
 
     @PostMapping
     public DemoEntity create(@RequestBody DemoEntity entity) {

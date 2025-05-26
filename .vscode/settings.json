@@ -1,5 +1,6 @@
 {
     "java.debug.settings.hotCodeReplace": "auto",
     "java.debug.settings.exceptionBreakpoint.skipClasses": [],
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.compile.nullAnalysis.mode": "automatic"
 }

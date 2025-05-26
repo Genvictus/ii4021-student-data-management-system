@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.std_data_mgmt.app.config.JwtConfig;
 import com.std_data_mgmt.app.dto.LoginRequest;
 import com.std_data_mgmt.app.dto.LoginResponse;
 import com.std_data_mgmt.app.dto.RegisterRequest;
 import com.std_data_mgmt.app.entity.User;
 import com.std_data_mgmt.app.entity.UserRole;
+import com.std_data_mgmt.app.security.JwtKeyProvider;
 import com.std_data_mgmt.app.service.AuthService;
 
 import io.jsonwebtoken.Jwts;
@@ -30,11 +30,11 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AuthController {
 
     private final AuthService authService;
-    private final JwtConfig jwtConfig;
+    private final JwtKeyProvider jwtKeyProvider;
 
-    public AuthController(AuthService authService, JwtConfig jwtConfig) {
+    public AuthController(AuthService authService, JwtKeyProvider jwtKeyProvider) {
         this.authService = authService;
-        this.jwtConfig = jwtConfig;
+        this.jwtKeyProvider = jwtKeyProvider;
     }
 
     @GetMapping
@@ -78,21 +78,21 @@ public class AuthController {
                 "Login successful!"
             );
 
-            PrivateKey jwtSigningKey = this.jwtConfig.getPrivateKey();
+            PrivateKey jwtSigningKey = this.jwtKeyProvider.getPrivateKey();
 
             String jwtToken = Jwts.builder()
                 .setSubject(String.valueOf(user.getUserId()))
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpirationMs()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtKeyProvider.getExpirationMs()))
                 .signWith(jwtSigningKey, SignatureAlgorithm.RS256)
                 .compact();
 
             Cookie jwtCookie = new Cookie("access-token", jwtToken);
             jwtCookie.setAttribute("SameSite", "strict");
             jwtCookie.setPath("/");
-            jwtCookie.setMaxAge((int) (jwtConfig.getExpirationMs() / 1000));
+            jwtCookie.setMaxAge((int) (jwtKeyProvider.getExpirationMs() / 1000));
 
             httpResponse.addCookie(jwtCookie);
 
