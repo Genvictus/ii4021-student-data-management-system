@@ -1,20 +1,10 @@
 package com.std_data_mgmt.app.entities;
+
 import com.std_data_mgmt.app.enums.Role;
+import jakarta.persistence.*;
+import lombok.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-
-
+// TODO: add null-safety with annotation for every Entity classes
 
 @Entity
 @Table(name = "user")
@@ -22,7 +12,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(of = {"userId", "role", "departmentId"})
 public class User {
     @Id
     @Column(name = "user_id")
@@ -43,4 +33,10 @@ public class User {
 
     @Column(name = "public_key")
     private String publicKey;
+
+    @Column(name = "department_id")
+    private String departmentId;
+
+    @Column(name = "supervisor_id")
+    private String supervisorId;
 }
