@@ -1,5 +1,4 @@
 import BN from 'bn.js';
-import { generatePrimeSync } from 'crypto';
 
 type RsaPublicKey = {
     e: BN,
