@@ -1,12 +1,16 @@
-import BN from 'bn.js';
+import BN from "bn.js";
 
 export class Polynomial {
-    private _coefficients: BN[]
-    private _mod: BN
+    private _coefficients: BN[];
+    private _mod: BN;
 
     constructor(coefficients: BN[], mod: BN) {
-        this._coefficients = coefficients
-        this._mod = mod
+        this._coefficients = coefficients;
+        this._mod = mod;
+    }
+
+    public get mod() {
+        return this._mod;
     }
 
     // f(x: BN): BN {
@@ -24,12 +28,14 @@ export class Polynomial {
 
     // Horner's method
     f(x: BN): BN {
-        let result = this._coefficients[this._coefficients.length - 1].umod(this._mod)
+        let result = this._coefficients[this._coefficients.length - 1].umod(
+            this._mod
+        );
 
         for (let i = this._coefficients.length - 2; i >= 0; i--) {
-            result = result.mul(x).add(this._coefficients[i]).umod(this._mod)
+            result = result.mul(x).add(this._coefficients[i]).umod(this._mod);
         }
 
-        return result
+        return result;
     }
 }
