@@ -1,5 +1,6 @@
 package com.std_data_mgmt.app.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
+public class RegisterRequestDto {
     private String userId;
     private String email;
     private String password;
@@ -17,4 +18,6 @@ public class RegisterRequest {
     private String role;
     private String publicKey;
     private String departmentId;
+    @JsonProperty(required = false)
+    private String supervisorId;
 }

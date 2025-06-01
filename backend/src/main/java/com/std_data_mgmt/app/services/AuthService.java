@@ -1,13 +1,12 @@
 package com.std_data_mgmt.app.services;
 
-import java.util.Optional;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.std_data_mgmt.app.entities.User;
 import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.repositories.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -25,8 +24,10 @@ public class AuthService {
             String rawPassword,
             String fullName,
             Role role,
+            String publicKey,
             String departmentId,
-            String publicKey) throws IllegalArgumentException {
+            Optional<String> supervisorId
+    ) throws IllegalArgumentException {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("User with this email already exists.");
         }

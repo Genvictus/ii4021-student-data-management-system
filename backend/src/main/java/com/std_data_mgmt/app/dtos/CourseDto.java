@@ -9,10 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
-    private String userId;
-    private String email;
-    private String fullName;
-    private String role;
-    private String message;
+public class CourseDto {
+    private String courseId;
+    private String code;
+    private int credits;
+    private String departmentId;
 }
+
+
