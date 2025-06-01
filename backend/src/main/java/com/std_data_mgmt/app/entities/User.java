@@ -1,5 +1,10 @@
 package com.std_data_mgmt.app.entities;
 
+import java.util.Optional;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.std_data_mgmt.app.dtos.DepartmentDto;
+import com.std_data_mgmt.app.dtos.UserDto;
 import com.std_data_mgmt.app.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,6 +43,7 @@ public class User {
     @Column(name = "public_key")
     private String publicKey;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", insertable = false, updatable = false)
     private Department department;
@@ -48,4 +54,22 @@ public class User {
 
     @Column(name = "supervisor_id")
     private String supervisorId;
+
+    public UserDto toDto(boolean department) {
+        Optional<DepartmentDto> departmentDto;
+        if (department) {
+            departmentDto = Optional.of(this.department.toDto());
+        } else {
+            departmentDto = Optional.ofNullable(null);
+        }
+        return new UserDto(
+                userId,
+                email,
+                fullName,
+                role,
+                publicKey,
+                departmentDto,
+                departmentId,
+                supervisorId);
+    }
 }

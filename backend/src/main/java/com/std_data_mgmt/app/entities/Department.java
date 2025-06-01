@@ -1,5 +1,7 @@
 package com.std_data_mgmt.app.entities;
 
+import com.std_data_mgmt.app.dtos.DepartmentDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -27,4 +29,8 @@ public class Department {
 
     @Column(name = "code")
     private String code;
+
+    public DepartmentDto toDto() {
+        return new DepartmentDto(departmentId, name, code);
+    }
 }
