@@ -5,14 +5,15 @@ import java.util.List;
 import com.std_data_mgmt.app.enums.TranscriptAccessInquiryStatus;
 import com.std_data_mgmt.app.utils.TranscriptDataConverter;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -35,6 +36,10 @@ public class TranscriptAccessInquiry {
     @Column(name = "inquiry_id")
     private String inquiryId;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requester_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User requester;
+
     @NonNull
     @Column(name = "requester_id")
     private String requesterId;
@@ -48,7 +53,7 @@ public class TranscriptAccessInquiry {
     @Column(name = "participants", columnDefinition = "jsonb")
     private List<TranscriptAccessInquiryParticipant> participants;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transcript_id", referencedColumnName = "transcript_id", insertable = false, updatable = false)
     private Transcript transcript;
 

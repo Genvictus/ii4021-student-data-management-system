@@ -20,8 +20,8 @@ create table public.transcript (
     encrypted_key_supervisor varchar(255),
     encrypted_transcript_data jsonb,
     hod_digital_signature varchar(255),
-    hod_id varchar(255) unique,
-    student_id varchar(255) unique,
+    hod_id varchar(255),
+    student_id varchar(255),
     transcript_id varchar(255) not null,
     primary key (transcript_id)
 );
@@ -60,4 +60,10 @@ alter table if exists public.transcript
 add constraint FKr60e7lofp662sy54aa1uq0duo foreign key (student_id) references public.user;
 
 alter table if exists public.transcript_access
+add constraint FKrq8isolyn8nbvxeatyaty6xed foreign key (requester_id) references public.user;
+
+alter table if exists public.transcript_access
 add constraint FKs61honakk0hhmi4tayxq1s3ov foreign key (transcript_id) references public.transcript;
+
+alter table if exists public.user
+add constraint FKgkh2fko1e4ydv1y6vtrwdc6my foreign key (department_id) references public.department;

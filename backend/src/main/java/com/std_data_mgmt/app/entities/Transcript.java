@@ -5,14 +5,16 @@ import java.util.List;
 import com.std_data_mgmt.app.enums.TranscriptStatus;
 import com.std_data_mgmt.app.utils.TranscriptDataConverter;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -38,10 +40,13 @@ public class Transcript {
     @Column(name = "transcript_id")
     private String transcriptId;
 
-    @NonNull
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id", referencedColumnName = "user_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User student;
+
+    @NonNull
+    @Column(name = "student_id")
+    private String studentId;
 
     @NonNull
     @Column(name = "status")
@@ -52,7 +57,7 @@ public class Transcript {
     @Column(name = "encrypted_transcript_data", columnDefinition = "jsonb")
     private List<TranscriptEntry> encryptedTranscriptData;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hod_id", referencedColumnName = "user_id")
     private User headOfDepartment;
 
@@ -71,4 +76,7 @@ public class Transcript {
     @NonNull
     @Column(name = "encrypted_key_hod")
     private String encryptedKeyHod;
+
+    @OneToMany(mappedBy = "transcript", fetch = FetchType.LAZY)
+    private List<TranscriptAccessInquiry> transcriptAccessInquiries;
 }

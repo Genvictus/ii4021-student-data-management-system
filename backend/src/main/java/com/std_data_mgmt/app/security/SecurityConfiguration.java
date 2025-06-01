@@ -15,26 +15,25 @@ import com.std_data_mgmt.app.security.jwt.JwtAuthenticationFilter;
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfiguration {
-    
+
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .formLogin().disable()
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("api/v1/demo/**").authenticated()
-                .anyRequest().permitAll()
-            );
+                .csrf().disable()
+                .formLogin().disable()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("api/v1/demo/**").authenticated()
+                        .anyRequest().permitAll());
         return http.build();
     }
 }

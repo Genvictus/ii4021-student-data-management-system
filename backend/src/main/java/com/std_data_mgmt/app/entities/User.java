@@ -6,10 +6,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -25,10 +29,10 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 @ToString(of = { "userId", "role", "departmentId" })
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @id
     @Column(name = "user_id")
     private String userId;
 
@@ -53,11 +57,14 @@ public class User {
     @Column(name = "public_key")
     private String publicKey;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", insertable = false, updatable = false)
+    private Department department;
+
     @NonNull
     @Column(name = "department_id")
     private String departmentId;
 
-    @NonNull
     @Column(name = "supervisor_id")
     private String supervisorId;
 }

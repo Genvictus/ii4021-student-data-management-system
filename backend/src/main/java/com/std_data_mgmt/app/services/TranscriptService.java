@@ -2,7 +2,6 @@ package com.std_data_mgmt.app.services;
 
 import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.std_data_mgmt.app.entities.Transcript;
@@ -36,5 +35,6 @@ public class TranscriptService {
                 Collections.emptyList(),
                 transcriptId);
         this.transcriptAccessInquiryRepository.save(accessInquiry);
+
     }
 }

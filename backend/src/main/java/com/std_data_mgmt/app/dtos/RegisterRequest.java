@@ -16,4 +16,5 @@ public class RegisterRequest {
     private String fullName;
     private String role;
     private String publicKey;
+    private String departmentId;
 }

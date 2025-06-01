@@ -45,21 +45,20 @@ public class AuthController {
                     request.getPassword(),
                     request.getFullName(),
                     Role.valueOf(request.getRole().toUpperCase()),
-                    request.getPublicKey()
-            );
+                    request.getPublicKey(),
+                    request.getDepartmentId());
             return new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>("Registration failed", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @RequestBody LoginRequest request,
-            HttpServletResponse httpResponse
-    ) {
+            HttpServletResponse httpResponse) {
 
         Optional<User> authenticatedUser = authService.authenticate(request.getEmail(), request.getPassword());
 
@@ -70,8 +69,7 @@ public class AuthController {
                     user.getEmail(),
                     user.getFullName(),
                     user.getRole().name(),
-                    "Login successful!"
-            );
+                    "Login successful!");
 
             PrivateKey jwtSigningKey = this.jwtKeyProvider.getPrivateKey();
 
@@ -94,8 +92,7 @@ public class AuthController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             LoginResponse errorResponse = new LoginResponse(
-                    null, null, null, null, "Invalid credentials."
-            );
+                    null, null, null, null, "Invalid credentials.");
             return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
         }
     }

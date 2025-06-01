@@ -20,13 +20,13 @@ public class AuthService {
     }
 
     public void register(
-        String userId,
-        String email,
-        String rawPassword,
-        String fullName,
-        Role role,
-        String publicKey
-    ) throws IllegalArgumentException{
+            String userId,
+            String email,
+            String rawPassword,
+            String fullName,
+            Role role,
+            String departmentId,
+            String publicKey) throws IllegalArgumentException {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("User with this email already exists.");
         }
@@ -43,6 +43,7 @@ public class AuthService {
         user.setFullName(fullName);
         user.setRole(role);
         user.setPublicKey(publicKey);
+        // user.setDepartmentId(departmentId);
 
         this.userRepository.save(user);
     }
