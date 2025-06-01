@@ -45,7 +45,8 @@ public class AuthController {
                     Role.valueOf(request.getRole().toUpperCase()),
                     request.getPublicKey(),
                     request.getDepartmentId(),
-                    Optional.ofNullable(request.getSupervisorId()));
+                    Optional.ofNullable(request.getSupervisorId())
+            );
             ResponseDto<Void> response = new ResponseDto<>(true, "User registered successfully", null);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
@@ -60,8 +61,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<Void>> login(
             @RequestBody LoginRequestDto request,
-            HttpServletResponse httpResponse) {
-
+            HttpServletResponse httpResponse
+    ) {
         Optional<User> authenticatedUser = authService.authenticate(request.getEmail(), request.getPassword());
 
         if (authenticatedUser.isEmpty()) {

@@ -26,7 +26,8 @@ public class AuthService {
             Role role,
             String publicKey,
             String departmentId,
-            Optional<String> supervisorId) throws IllegalArgumentException {
+            Optional<String> supervisorId
+    ) throws IllegalArgumentException {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("User with this email already exists.");
         }
