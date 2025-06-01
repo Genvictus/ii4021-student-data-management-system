@@ -43,21 +43,22 @@ services:
         ipv4_address: 172.16.100.201
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/schema.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-postgres}
 
   pgadmin:
     profiles: [ 'dev' ]
-    image: dpage/pgadmin4:9.3
+    image: dpage/pgadmin4:9.4
     networks:
       dev-network:
         ipv4_address: 172.16.100.202
     ports:
       - 15432:80
     volumes:
-      - ./postgres/pgadmin/servers_dev.json:/pgadmin4/servers.json
+      - ./pgadmin/servers_dev.json:/pgadmin4/servers.json
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-dev@mail.com}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-development}

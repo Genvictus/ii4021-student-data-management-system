@@ -1,7 +1,7 @@
 package com.std_data_mgmt.app.entities;
 
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,9 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class TranscriptAccessInquiryParticipant {
-    private String id;
-    private String public_key;
-    private String encrypted_share;
+public class Student extends User {
+    @OneToOne(mappedBy = "user")
+    private Transcript transcript;
 }
