@@ -26,8 +26,7 @@ public class AuthService {
             Role role,
             String publicKey,
             String departmentId,
-            Optional<String> supervisorId
-    ) throws IllegalArgumentException {
+            Optional<String> supervisorId) throws IllegalArgumentException {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("User with this email already exists.");
         }
@@ -44,7 +43,10 @@ public class AuthService {
         user.setFullName(fullName);
         user.setRole(role);
         user.setPublicKey(publicKey);
-        // user.setDepartmentId(departmentId);
+        user.setDepartmentId(departmentId);
+        supervisorId.ifPresent(id -> {
+            user.setSupervisorId(id);
+        });
 
         this.userRepository.save(user);
     }

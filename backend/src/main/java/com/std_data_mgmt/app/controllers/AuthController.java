@@ -45,15 +45,14 @@ public class AuthController {
                     Role.valueOf(request.getRole().toUpperCase()),
                     request.getPublicKey(),
                     request.getDepartmentId(),
-                    Optional.of(request.getSupervisorId())
-            );
+                    Optional.ofNullable(request.getSupervisorId()));
             ResponseDto<Void> response = new ResponseDto<>(true, "User registered successfully", null);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             ResponseDto<Void> response = new ResponseDto<>(false, "Invalid parameter", null);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            ResponseDto<Void> response = new ResponseDto<>(false, "Internal server error", null);
+            ResponseDto<Void> response = new ResponseDto<>(false, e.getClass().toString(), null);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
@@ -61,8 +60,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<Void>> login(
             @RequestBody LoginRequestDto request,
-            HttpServletResponse httpResponse
-    ) {
+            HttpServletResponse httpResponse) {
 
         Optional<User> authenticatedUser = authService.authenticate(request.getEmail(), request.getPassword());
 
