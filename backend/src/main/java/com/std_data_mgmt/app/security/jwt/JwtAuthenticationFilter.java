@@ -1,8 +1,12 @@
 package com.std_data_mgmt.app.security.jwt;
 
-import java.io.IOException;
-import java.util.List;
-
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +16,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter implements Filter {
@@ -35,7 +30,8 @@ public class JwtAuthenticationFilter implements Filter {
     public void doFilter(
             ServletRequest request,
             ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+            FilterChain chain
+    ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String token = null;
         Cookie[] cookies = httpRequest.getCookies();
@@ -64,17 +60,19 @@ public class JwtAuthenticationFilter implements Filter {
 
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, token,
-                        authorities);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        userId, token,
+                        authorities
+                );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } catch (ExpiredJwtException e) {
                 logger.error(e.toString());
-                // handle this later
+                // TODO: handle this later
             } catch (JwtException e) {
                 logger.error(e.toString());
-                // handle this later
+                // TODO: `handle this later
             }
         }
 

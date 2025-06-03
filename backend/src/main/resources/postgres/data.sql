@@ -1,2 +1,2 @@
-INSERT INTO department (department_id, code, name) VALUES ('135', 'IF', 'Teknik Informatika');
-INSERT INTO department (department_id, code, name) VALUES ('182', 'STI', 'Sistem dan Teknologi Informasi');
+INSERT INTO department (department_id, code, name) VALUES ('135', 'IF', 'Teknik Informatika') ON CONFLICT (department_id) DO NOTHING;
+INSERT INTO department (department_id, code, name) VALUES ('182', 'STI', 'Sistem dan Teknologi Informasi') ON CONFLICT (department_id) DO NOTHING;
