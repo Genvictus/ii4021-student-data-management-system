@@ -1,7 +1,8 @@
-package com.std_data_mgmt.app.utils;
+package com.std_data_mgmt.unit.utils;
 
 
 import com.std_data_mgmt.app.entities.TranscriptAccessInquiryParticipant;
+import com.std_data_mgmt.app.utils.TranscriptAccessInquiryParticipantConverter;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

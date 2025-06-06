@@ -1,7 +1,8 @@
-package com.std_data_mgmt.app.utils;
+package com.std_data_mgmt.unit.utils;
 
 import com.std_data_mgmt.app.entities.TranscriptEntry;
 import com.std_data_mgmt.app.enums.Score;
+import com.std_data_mgmt.app.utils.TranscriptDataConverter;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
