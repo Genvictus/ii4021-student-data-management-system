@@ -45,9 +45,7 @@ public class AuthService {
         user.setRole(role);
         user.setPublicKey(publicKey);
         user.setDepartmentId(departmentId);
-        supervisorId.ifPresent(id -> {
-            user.setSupervisorId(id);
-        });
+        supervisorId.ifPresent(user::setSupervisorId);
 
         this.userRepository.save(user);
     }
