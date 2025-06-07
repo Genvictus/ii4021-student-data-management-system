@@ -17,8 +17,7 @@ public class UserService {
     }
 
     public Optional<User> getUserById(String id) {
-        Optional<User> user = this.userRepository.findById(id);
-        return user;
+        return this.userRepository.findById(id);
     }
 
     public List<User> getUsers(Optional<String> departmentId, Optional<String> supervisorId) {

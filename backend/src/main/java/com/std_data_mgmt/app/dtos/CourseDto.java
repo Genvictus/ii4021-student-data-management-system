@@ -12,7 +12,7 @@ import lombok.Setter;
 public class CourseDto {
     private String courseId;
     private String code;
-    private int credits;
+    private Integer credits;
     private String departmentId;
 }
 

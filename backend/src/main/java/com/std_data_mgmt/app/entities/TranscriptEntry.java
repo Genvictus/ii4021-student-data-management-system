@@ -1,12 +1,7 @@
 package com.std_data_mgmt.app.entities;
 
 import com.std_data_mgmt.app.enums.Score;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -15,6 +10,6 @@ import lombok.Setter;
 @Builder
 public class TranscriptEntry {
     private String courseCode;
-    private int credits;
+    private Integer credits;
     private Score score;
 }

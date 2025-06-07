@@ -5,10 +5,7 @@ import com.std_data_mgmt.app.entities.Course;
 import com.std_data_mgmt.app.services.CourseService;
 import com.std_data_mgmt.app.utils.FormattedResponseEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +31,18 @@ public class CourseController {
     }
 
     @GetMapping()
-    public FormattedResponseEntity<List<CourseDto>> getCourses() {
-        List<Course> courses = this.courseService.getCourses();
+    public FormattedResponseEntity<List<CourseDto>> getCourses(
+            @RequestParam Optional<String> courseId,
+            @RequestParam Optional<String> code,
+            @RequestParam Optional<Integer> credits,
+            @RequestParam Optional<String> departmentId
+    ) {
+        List<Course> courses = this.courseService.getCourses(
+                courseId,
+                code,
+                credits,
+                departmentId
+        );
         List<CourseDto> courseDtos = courses.stream().map(Course::toDto).toList();
         return new FormattedResponseEntity<>(HttpStatus.OK, true, "Successfully get courses", courseDtos);
     }

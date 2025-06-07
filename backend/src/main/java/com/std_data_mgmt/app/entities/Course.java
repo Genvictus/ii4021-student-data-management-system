@@ -15,6 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Course {
     @Id
     @Column(name = "course_id")
@@ -24,7 +25,7 @@ public class Course {
     private String code;
 
     @Column(name = "credits")
-    private int credits;
+    private Integer credits;
 
     @Column(name = "department_id")
     private String departmentId;
