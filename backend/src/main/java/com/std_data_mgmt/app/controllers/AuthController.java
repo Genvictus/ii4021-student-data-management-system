@@ -3,7 +3,6 @@ package com.std_data_mgmt.app.controllers;
 import com.std_data_mgmt.app.dtos.LoginRequestDto;
 import com.std_data_mgmt.app.dtos.RegisterRequestDto;
 import com.std_data_mgmt.app.entities.User;
-import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.security.jwt.JwtKeyProvider;
 import com.std_data_mgmt.app.services.AuthService;
 import com.std_data_mgmt.app.utils.FormattedResponseEntity;
@@ -11,6 +10,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,35 +34,30 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public FormattedResponseEntity<Void> register(@RequestBody RegisterRequestDto request) {
-        try {
-            authService.register(
-                    request.getUserId(),
-                    request.getEmail(),
-                    request.getPassword(),
-                    request.getFullName(),
-                    Role.valueOf(request.getRole().toUpperCase()),
-                    request.getPublicKey(),
-                    request.getDepartmentId(),
-                    Optional.ofNullable(request.getSupervisorId())
-            );
-            return new FormattedResponseEntity<>(HttpStatus.CREATED, true, "User registered successfully", null);
-        } catch (IllegalArgumentException e) {
-            return new FormattedResponseEntity<>(HttpStatus.BAD_REQUEST, false, "Invalid parameter", null);
-        } catch (Exception e) {
-            return new FormattedResponseEntity<>(HttpStatus.BAD_REQUEST, false, e.getClass().toString(), null);
-        }
+    public FormattedResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDto request) {
+        authService.register(request.toUser());
+        return new FormattedResponseEntity<>(
+                HttpStatus.CREATED,
+                true,
+                "User registered successfully",
+                null
+        );
     }
 
     @PostMapping("/login")
     public FormattedResponseEntity<Void> login(
-            @RequestBody LoginRequestDto request,
+            @Valid @RequestBody LoginRequestDto request,
             HttpServletResponse httpResponse
     ) {
         Optional<User> authenticatedUser = authService.authenticate(request.getEmail(), request.getPassword());
 
         if (authenticatedUser.isEmpty()) {
-            return new FormattedResponseEntity<>(HttpStatus.UNAUTHORIZED, false, "Invalid credentials", null);
+            return new FormattedResponseEntity<>(
+                    HttpStatus.BAD_REQUEST,
+                    false,
+                    "Invalid credentials",
+                    null
+            );
         }
 
         User user = authenticatedUser.get();

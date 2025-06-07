@@ -23,7 +23,8 @@ public class TranscriptDataConverter implements AttributeConverter<List<Transcri
         try {
             return objectMapper.writeValueAsString(transcriptEntries);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Error converting transcript entries to JSON", e);
+            //            TODO: log error message
+            throw new IllegalArgumentException("Error converting transcript entries to JSON");
         }
     }
 
@@ -38,7 +39,8 @@ public class TranscriptDataConverter implements AttributeConverter<List<Transcri
                     objectMapper.getTypeFactory().constructCollectionType(List.class, TranscriptEntry.class)
             );
         } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading transcript entries from JSON", e);
+//            TODO: log error message
+            throw new IllegalArgumentException("Error reading transcript entries from JSON");
         }
     }
 }

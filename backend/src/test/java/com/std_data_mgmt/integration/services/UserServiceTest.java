@@ -32,7 +32,6 @@ public class UserServiceTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Should retrieve a user by ID when it exists")
     void shouldGetUserByIdWhenExists() {
-        // Given
         User user1 = User.builder()
                 .userId("13521170")
                 .departmentId("135")

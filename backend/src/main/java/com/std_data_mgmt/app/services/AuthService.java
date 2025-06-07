@@ -1,7 +1,7 @@
 package com.std_data_mgmt.app.services;
 
 import com.std_data_mgmt.app.entities.User;
-import com.std_data_mgmt.app.enums.Role;
+import com.std_data_mgmt.app.exceptions.ResourceAlreadyExistsException;
 import com.std_data_mgmt.app.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,34 +19,19 @@ public class AuthService {
     }
 
     public void register(
-            String userId,
-            String email,
-            String rawPassword,
-            String fullName,
-            Role role,
-            String publicKey,
-            String departmentId,
-            Optional<String> supervisorId
-    ) throws IllegalArgumentException {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("User with this email already exists.");
+            User user
+    ) throws ResourceAlreadyExistsException {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new ResourceAlreadyExistsException("User with this email already exists.");
         }
-        if (userRepository.findById(userId).isPresent()) {
-            throw new IllegalArgumentException("User with this ID already exists.");
+        if (userRepository.findById(user.getUserId()).isPresent()) {
+            throw new ResourceAlreadyExistsException("User with this ID already exists.");
         }
 
-        String hashedPassword = passwordEncoder.encode(rawPassword);
+//        TODO: handle existing public key case
 
-        User user = new User();
-        user.setUserId(userId);
-        user.setEmail(email);
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
-        user.setFullName(fullName);
-        user.setRole(role);
-        user.setPublicKey(publicKey);
-        user.setDepartmentId(departmentId);
-        supervisorId.ifPresent(user::setSupervisorId);
-
         this.userRepository.save(user);
     }
 

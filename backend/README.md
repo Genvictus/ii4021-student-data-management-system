@@ -68,6 +68,16 @@ There are two options (pick one):
        docker compose --profile dev-light up
        ```
 
+#### 💡 Pro Tip: Run with `--watch` command to enable hot reload. It works for both the `dev` and `dev-light` profile
+
+```
+docker compose --profile dev up --watch
+```
+
+```
+docker compose --profile dev-light up --watch
+```
+
 ### How to Run The App Locally
 
 1. Run the database container
