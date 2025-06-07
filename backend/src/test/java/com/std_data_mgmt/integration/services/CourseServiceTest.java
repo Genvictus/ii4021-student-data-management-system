@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,24 +27,29 @@ public class CourseServiceTest extends BaseIntegrationTest {
     private Course course2;
     private Course course3;
 
+    private String course1Id;
+    private String course2Id;
+
     @BeforeEach
     void setUp() {
         courseRepository.deleteAll();
 
         course1 = new Course();
-        course1.setCourseId("IF101");
+        course1Id = UUID.randomUUID().toString();
+        course1.setCourseId(course1Id);
         course1.setCode("IF101");
         course1.setCredits(3);
         course1.setDepartmentId("135");
 
         course2 = new Course();
-        course2.setCourseId("II201");
+        course2Id = UUID.randomUUID().toString();
+        course2.setCourseId(course2Id);
         course2.setCode("II201");
         course2.setCredits(4);
         course2.setDepartmentId("182");
 
         course3 = new Course();
-        course3.setCourseId("IF202");
+        course3.setCourseId(UUID.randomUUID().toString());
         course3.setCode("IF202");
         course3.setCredits(3);
         course3.setDepartmentId("135");
@@ -56,10 +62,10 @@ public class CourseServiceTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Should retrieve a course by its ID")
     void getCourseById_ExistingId_ReturnsCourse() {
-        Optional<Course> foundCourse = courseService.getCourseById("IF101");
+        Optional<Course> foundCourse = courseService.getCourseById(course1Id);
 
         assertThat(foundCourse).isPresent();
-        assertThat(foundCourse.get().getCourseId()).isEqualTo("IF101");
+        assertThat(foundCourse.get().getCourseId()).isEqualTo(course1Id);
         assertThat(foundCourse.get().getCode()).isEqualTo("IF101");
         assertThat(foundCourse.get().getCredits()).isEqualTo(3);
         assertThat(foundCourse.get().getDepartmentId()).isEqualTo("135");
@@ -91,14 +97,14 @@ public class CourseServiceTest extends BaseIntegrationTest {
     @DisplayName("Should retrieve courses filtered by course ID")
     void getCourses_ByCourseId_ReturnsMatchingCourse() {
         List<Course> courses = courseService.getCourses(
-                Optional.of("II201"),
+                Optional.of(course2Id),
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty()
         );
 
         assertThat(courses).hasSize(1);
-        assertThat(courses.get(0)).isEqualTo(course2);
+        assertThat(courses.getFirst()).isEqualTo(course2);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.std_data_mgmt.app;
+package com.std_data_mgmt.app.repositories;
 
 import com.std_data_mgmt.app.entities.Department;
 import org.springframework.data.jpa.repository.JpaRepository;

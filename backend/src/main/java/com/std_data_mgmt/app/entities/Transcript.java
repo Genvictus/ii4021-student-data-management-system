@@ -3,8 +3,11 @@ package com.std_data_mgmt.app.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.std_data_mgmt.app.enums.TranscriptStatus;
 import com.std_data_mgmt.app.utils.TranscriptDataConverter;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 
@@ -40,6 +43,7 @@ public class Transcript {
 
     @NonNull
     @Convert(converter = TranscriptDataConverter.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "encrypted_transcript_data", columnDefinition = "jsonb")
     private List<TranscriptEntry> encryptedTranscriptData;
 
@@ -48,7 +52,10 @@ public class Transcript {
     @JoinColumn(name = "hod_id", referencedColumnName = "user_id")
     private User headOfDepartment;
 
-    @NonNull
+    @Nonnull
+    @Column(name = "hod_id", insertable = false, updatable = false)
+    private String hodId;
+
     @Column(name = "hod_digital_signature")
     private String hodDigitalSignature;
 

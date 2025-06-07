@@ -31,11 +31,15 @@ public class TranscriptService {
 
     public Transcript createTranscript(Transcript transcript) {
 //        TODO: @Genvictus
+//        Should validate that one student should only have at most one transcript
         return transcript;
     }
 
     public void updateTranscript(Transcript transcript) {
-//        TODO: @Genvictus: Ensure that the sign property cannot be updated
+//        TODO: @Genvictus
+//        This should be a PUT operation => replacing an old one with a new one
+//        Ensure that the sign property cannot be updated, so transcript.signature must be null when the transcript
+//        is updated
         this.transcriptRepository.save(transcript);
     }
 
