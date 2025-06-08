@@ -53,8 +53,12 @@ public class TranscriptService {
     }
 
     public TranscriptAccessInquiry createTranscriptAccessInquiry(String requesterId, String transcriptId) {
+//        TODO: get the supervisor id of this transcript's owner
+        String requesteeId = "";
+
         TranscriptAccessInquiry accessInquiry = new TranscriptAccessInquiry(
                 requesterId,
+                requesteeId,
                 TranscriptAccessInquiryStatus.WAITING_FOR_PARTICIPANTS,
                 Collections.emptyList(),
                 transcriptId
@@ -63,19 +67,19 @@ public class TranscriptService {
     }
 
     public List<TranscriptAccessInquiry> getTranscriptAccessInquiries() {
-//        TODO: @Genvictus: add some filters if necessary
+//        TODO: @Genvictus: add some filters by department!
         return List.of();
     }
 
-    public void joinTranscriptAccessInquiry() {
+    public void joinTranscriptAccessInquiry(String inquiryId, String participantId) {
 //        TODO: @Genvictus
     }
 
-    public void approveTranscriptAccessInquiry() {
+    public void approveTranscriptAccessInquiry(String inquiryId, List<String> encrpytedShares) {
 //        TODO: @Genvictus
     }
 
-    public void rejectTranscriptAccessInquiry() {
+    public void rejectTranscriptAccessInquiry(String inquiryId) {
 //        TODO: @Genvictus
     }
 }

@@ -3,7 +3,6 @@ package com.std_data_mgmt.app.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.std_data_mgmt.app.enums.TranscriptStatus;
 import com.std_data_mgmt.app.utils.TranscriptDataConverter;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -52,7 +51,7 @@ public class Transcript {
     @JoinColumn(name = "hod_id", referencedColumnName = "user_id")
     private User headOfDepartment;
 
-    @Nonnull
+    @NonNull
     @Column(name = "hod_id", insertable = false, updatable = false)
     private String hodId;
 
