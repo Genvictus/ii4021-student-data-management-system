@@ -1,6 +1,6 @@
 services:
   backend-dev-light:
-    profiles: [ 'dev-light' ]
+    profiles: [ "dev-light" ]
     ports:
       - "3000:3000"
     networks:
@@ -21,7 +21,7 @@ services:
           path: ./backend/build
 
   backend-dev:
-    profiles: [ 'dev' ]
+    profiles: [ "dev" ]
     ports:
       - "3000:3000"
     networks:
@@ -42,7 +42,7 @@ services:
           path: ./backend
 
   postgres-dev:
-    profiles: [ 'dev', 'dev-light' ]
+    profiles: [ "dev", "dev-light" ]
     ports:
       - "5433:5432"
     image: postgres:17-alpine
@@ -58,7 +58,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-postgres}
 
   pgadmin:
-    profiles: [ 'dev', 'dev-light' ]
+    profiles: [ "dev", "dev-light" ]
     image: dpage/pgadmin4:9.4
     networks:
       dev-network:
@@ -76,10 +76,12 @@ services:
 volumes:
   postgres_data:
 
-
 networks:
   dev-network:
     driver: bridge
     ipam:
       config:
         - subnet: 172.16.100.0/24
+    internal: true
+    # driver_opts:
+    #   com.docker.network.bridge.gateway_mode_ipv4: isolated
