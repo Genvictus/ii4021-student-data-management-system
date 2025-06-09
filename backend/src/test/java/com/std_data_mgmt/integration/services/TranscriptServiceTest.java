@@ -31,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("TranscriptService Integration Tests")
 public class TranscriptServiceTest extends BaseIntegrationTest {
     public static final int MINIMUM_PARTICIPANTS = 2;
+    public static final String department135Id = "135";
+    public static final String department182Id = "182";
 
     @Autowired
     private TranscriptService transcriptService;
@@ -62,6 +64,9 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        transcriptAccessInquiryRepository.deleteAll(); // Clean up inquiries before each transcript setup
+        transcriptRepository.deleteAll();
+        userRepository.deleteAll();
         setUpUsers();
         setUpTranscripts();
     }
@@ -118,8 +123,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(transcript);
-                }
-        );
+                });
     }
 
     @Test
@@ -162,18 +166,15 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(presignedTranscript);
-                }
-        );
+                });
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(approvedUnsignedTranscript);
-                }
-        );
+                });
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(pendingPresignedTranscript);
-                }
-        );
+                });
     }
 
     @Test
@@ -187,8 +188,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         List<TranscriptEntry> newTranscriptData = List.of(
                 new TranscriptEntry("IF2211", 3, Score.C),
                 new TranscriptEntry("IF2240", 3, Score.B),
-                new TranscriptEntry("IF4033", 3, Score.BC)
-        );
+                new TranscriptEntry("IF4033", 3, Score.BC));
         transcriptToUpdate.setEncryptedTranscriptData(newTranscriptData);
 
         transcriptService.updateTranscript(transcriptToUpdate);
@@ -229,8 +229,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.updateTranscript(transcriptToUpdate1);
-                }
-        );
+                });
 
         var foundTranscript2 = transcriptService.getTranscriptById(transcript2.getTranscriptId());
         assertThat(foundTranscript2).isPresent();
@@ -241,8 +240,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.updateTranscript(transcriptToUpdate2);
-                }
-        );
+                });
     }
 
     @Test
@@ -263,9 +261,9 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var digitalSignature = "digital signature";
         assertThrows(
                 IllegalArgumentException.class, () -> {
-                    transcriptService.signTranscript(transcript2.getTranscriptId(), digitalSignature);
-                }
-        );
+                    transcriptService.signTranscript(transcript2.getTranscriptId(),
+                            digitalSignature);
+                });
     }
 
     @Test
@@ -287,18 +285,21 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     @DisplayName("Should create transcript access inquiry")
     void shouldCreateTranscriptAccessInquiry() {
         var transcriptAccessInquiryToCreate = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
+                department135Id);
 
         var inquiries = transcriptService.getTranscriptAccessInquiries();
         assertThat(inquiries.size()).isEqualTo(1);
 
         var createdTranscriptAccessInquiry = inquiries.getFirst();
-        assertThat(createdTranscriptAccessInquiry.getInquiryId()).isEqualTo(transcriptAccessInquiryToCreate.getInquiryId());
-        assertThat(createdTranscriptAccessInquiry.getTranscriptStatus()).isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_PARTICIPANTS);
+        assertThat(createdTranscriptAccessInquiry.getInquiryId())
+                .isEqualTo(transcriptAccessInquiryToCreate.getInquiryId());
+        assertThat(createdTranscriptAccessInquiry.getInquiryStatus())
+                .isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_PARTICIPANTS);
         assertThat(createdTranscriptAccessInquiry.getRequesterId()).isEqualTo(supervisor_135_2_id);
-        assertThat(createdTranscriptAccessInquiry.getParticipants().getFirst().getId()).isEqualTo(supervisor_135_2_id);
+        assertThat(createdTranscriptAccessInquiry.getParticipants().getFirst().getId())
+                .isEqualTo(supervisor_135_2_id);
     }
 
     @Test
@@ -306,24 +307,25 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldJoinTranscriptAccessInquiryWhenWaitingForParticipants() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
+                department135Id);
 
         // WHEN
         transcriptService.joinTranscriptAccessInquiry(
                 createdInquiry.getInquiryId(),
-                supervisor_135_3_id
-        );
+                supervisor_135_3_id,
+                department135Id);
 
         // THEN
         var inquiries = transcriptService.getTranscriptAccessInquiries();
         assertThat(inquiries.size()).isEqualTo(1);
         var updatedInquiry = inquiries.getFirst();
-        assertThat(updatedInquiry.getTranscriptStatus()).isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_REQUESTEE);
+        assertThat(updatedInquiry.getInquiryStatus())
+                .isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_REQUESTEE);
         assertThat(updatedInquiry.getParticipants()
-                           .stream()
-                           .anyMatch(p -> p.getId().equals(supervisor_135_3_id))).isTrue();
+                .stream()
+                .anyMatch(p -> p.getId().equals(supervisor_135_3_id))).isTrue();
     }
 
     @Test
@@ -331,25 +333,28 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldJoinTranscriptAccessInquiryWhenWaitingForRequestee() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_3_id);
+                department135Id);
+        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                supervisor_135_3_id,
+                department135Id);
 
         // WHEN
         transcriptService.joinTranscriptAccessInquiry(
                 createdInquiry.getInquiryId(),
-                supervisor_135_4_id
-        );
+                supervisor_135_4_id,
+                department135Id);
 
         // THEN
         var inquiries = transcriptService.getTranscriptAccessInquiries();
         assertThat(inquiries.size()).isEqualTo(1);
         var updatedInquiry = inquiries.getFirst();
-        assertThat(updatedInquiry.getTranscriptStatus()).isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_REQUESTEE);
+        assertThat(updatedInquiry.getInquiryStatus())
+                .isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_REQUESTEE);
         assertThat(updatedInquiry.getParticipants()
-                           .stream()
-                           .anyMatch(p -> p.getId().equals(supervisor_135_4_id))).isTrue();
+                .stream()
+                .anyMatch(p -> p.getId().equals(supervisor_135_4_id))).isTrue();
     }
 
     @Test
@@ -357,20 +362,21 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldFailToJoinTranscriptAccessInquiryIfParticipantAlreadyJoined() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_3_id);
+                department135Id);
+        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                supervisor_135_3_id,
+                department135Id);
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
-                            supervisor_135_3_id // Trying to join again
-                    );
-                }
-        );
+                            supervisor_135_3_id, // Trying to join again
+                            department135Id);
+                });
     }
 
     @Test
@@ -378,19 +384,18 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldFailToJoinTranscriptAccessInquiryIfParticipantIsRequestee() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
+                department135Id);
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
-                            supervisor_135_2_id // Requestee trying to join
-                    );
-                }
-        );
+                            supervisor_135_2_id, // Requestee trying to join
+                            department135Id);
+                });
     }
 
     @Test
@@ -398,19 +403,18 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldFailToJoinTranscriptAccessInquiryIfParticipantFromDifferentDepartment() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
+                department135Id);
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
-                            supervisor_182_1_id // From different department
-                    );
-                }
-        );
+                            supervisor_182_1_id, // From different department
+                            department182Id);
+                });
     }
 
     @Test
@@ -418,34 +422,36 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldApproveTranscriptAccessInquiryWhenWaitingForRequestee() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_3_id);
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_4_id);
+                department135Id);
+        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                supervisor_135_3_id,
+                department135Id);
+        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                supervisor_135_4_id,
+                department135Id);
 
         Map<String, String> encryptedShares = Map.of(
                 supervisor_135_2_id, "encrypted share 1",
                 supervisor_135_3_id, "encrypted share 2",
-                supervisor_135_4_id, "encrypted share 3"
-        );
+                supervisor_135_4_id, "encrypted share 3");
 
         // WHEN
         transcriptService.approveTranscriptAccessInquiry(
                 createdInquiry.getInquiryId(),
-                encryptedShares
-        );
+                encryptedShares);
 
         // THEN
         var inquiries = transcriptService.getTranscriptAccessInquiries();
         assertThat(inquiries.size()).isEqualTo(1);
 
         var approvedInquiry = inquiries.getFirst();
-        assertThat(approvedInquiry.getTranscriptStatus()).isEqualTo(TranscriptAccessInquiryStatus.APPROVED);
+        assertThat(approvedInquiry.getInquiryStatus()).isEqualTo(TranscriptAccessInquiryStatus.APPROVED);
 
         var participants = approvedInquiry.getParticipants();
         var approvedInquiryEncryptedShares = participants.stream()
-                .map(TranscriptAccessInquiryParticipant::getEncrypted_share);
+                .map(TranscriptAccessInquiryParticipant::getEncryptedShare);
         assertThat(approvedInquiryEncryptedShares).isEqualTo(encryptedShares);
     }
 
@@ -454,10 +460,12 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldRejectTranscriptAccessInquiryWhenWaitingForRequestee() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_3_id);
+                department135Id);
+        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                supervisor_135_3_id,
+                department135Id);
 
         // WHEN
         transcriptService.rejectTranscriptAccessInquiry(createdInquiry.getInquiryId());
@@ -466,7 +474,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var inquiries = transcriptService.getTranscriptAccessInquiries();
         assertThat(inquiries.size()).isEqualTo(1);
         var rejectedInquiry = inquiries.getFirst();
-        assertThat(rejectedInquiry.getTranscriptStatus()).isEqualTo(TranscriptAccessInquiryStatus.CLOSED);
+        assertThat(rejectedInquiry.getInquiryStatus()).isEqualTo(TranscriptAccessInquiryStatus.CLOSED);
     }
 
     @Test
@@ -474,21 +482,25 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldFailToJoinTranscriptAccessInquiryIfStatusIsApproved() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_3_id);
-        transcriptService.approveTranscriptAccessInquiry(createdInquiry.getInquiryId(), List.of("share1", "share2"));
+                department135Id);
+        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                supervisor_135_3_id,
+                department135Id);
+        transcriptService.approveTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                Map.of(
+                        supervisor_135_2_id, "share1",
+                        supervisor_135_3_id, "share2"));
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
-                            supervisor_135_4_id
-                    );
-                }
-        );
+                            supervisor_135_4_id,
+                            department135Id);
+                });
     }
 
     @Test
@@ -496,9 +508,9 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldFailToJoinTranscriptAccessInquiryIfStatusIsClosed() {
         // GIVEN
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
+                department135Id);
         transcriptService.rejectTranscriptAccessInquiry(createdInquiry.getInquiryId());
 
         // WHEN & THEN
@@ -506,10 +518,9 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                 IllegalArgumentException.class, () -> {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
-                            supervisor_135_3_id
-                    );
-                }
-        );
+                            supervisor_135_3_id,
+                            department135Id);
+                });
     }
 
     @Test
@@ -517,43 +528,45 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     void shouldFailToApproveTranscriptAccessInquiryIfStatusIsNotWaitingForRequestee() {
         // GIVEN: Inquiry in WAITING_FOR_PARTICIPANTS
         var inquiryWaitingForParticipants = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
+                department135Id);
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.approveTranscriptAccessInquiry(
                             inquiryWaitingForParticipants.getInquiryId(),
-                            List.of("share1", "share2")
-                    );
-                }
-        );
+                            Map.of(supervisor_135_2_id, "share1"));
+                });
 
         // GIVEN: Inquiry in APPROVED status
         var inquiryApproved = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.joinTranscriptAccessInquiry(inquiryApproved.getInquiryId(), supervisor_135_3_id);
-        transcriptService.approveTranscriptAccessInquiry(inquiryApproved.getInquiryId(), List.of("share1", "share2"));
+                department135Id);
+        transcriptService.joinTranscriptAccessInquiry(inquiryApproved.getInquiryId(),
+                supervisor_135_3_id,
+                department135Id);
+        transcriptService.approveTranscriptAccessInquiry(inquiryApproved.getInquiryId(),
+                Map.of(
+                        supervisor_135_2_id, "share1",
+                        supervisor_135_3_id, "share2"));
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.approveTranscriptAccessInquiry(
                             inquiryApproved.getInquiryId(),
-                            List.of("share3", "share4")
-                    );
-                }
-        );
+                            Map.of(supervisor_135_2_id, "share3", supervisor_135_3_id,
+                                    "share4"));
+                });
 
         // GIVEN: Inquiry in CLOSED status
         var inquiryClosed = transcriptService.createTranscriptAccessInquiry(
+                transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
+                department135Id);
         transcriptService.rejectTranscriptAccessInquiry(inquiryClosed.getInquiryId());
 
         // WHEN & THEN
@@ -561,68 +574,12 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                 IllegalArgumentException.class, () -> {
                     transcriptService.approveTranscriptAccessInquiry(
                             inquiryClosed.getInquiryId(),
-                            List.of("share5", "share6")
-                    );
-                }
-        );
-    }
-
-    @Test
-    @DisplayName("Should fail to reject transcript access inquiry if status is not WAITING_FOR_REQUESTEE")
-    void shouldFailToRejectTranscriptAccessInquiryIfStatusIsNotWaitingForRequestee() {
-        // GIVEN: Inquiry in WAITING_FOR_PARTICIPANTS
-        var inquiryWaitingForParticipants = transcriptService.createTranscriptAccessInquiry(
-                supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-
-        // WHEN & THEN
-        assertThrows(
-                IllegalArgumentException.class, () -> {
-                    transcriptService.rejectTranscriptAccessInquiry(
-                            inquiryWaitingForParticipants.getInquiryId()
-                    );
-                }
-        );
-
-        // GIVEN: Inquiry in APPROVED status
-        var inquiryApproved = transcriptService.createTranscriptAccessInquiry(
-                supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.joinTranscriptAccessInquiry(inquiryApproved.getInquiryId(), supervisor_135_3_id);
-        transcriptService.approveTranscriptAccessInquiry(inquiryApproved.getInquiryId(), List.of("share1", "share2"));
-
-        // WHEN & THEN
-        assertThrows(
-                IllegalArgumentException.class, () -> {
-                    transcriptService.rejectTranscriptAccessInquiry(
-                            inquiryApproved.getInquiryId()
-                    );
-                }
-        );
-
-        // GIVEN: Inquiry in CLOSED status
-        var inquiryClosed = transcriptService.createTranscriptAccessInquiry(
-                supervisor_135_2_id,
-                transcript1.getTranscriptId()
-        );
-        transcriptService.rejectTranscriptAccessInquiry(inquiryClosed.getInquiryId());
-
-        // WHEN & THEN
-        assertThrows(
-                IllegalArgumentException.class, () -> {
-                    transcriptService.rejectTranscriptAccessInquiry(
-                            inquiryClosed.getInquiryId()
-                    );
-                }
-        );
+                            Map.of(supervisor_135_2_id, "share5", supervisor_135_3_id,
+                                    "share6"));
+                });
     }
 
     private void setUpTranscripts() {
-        transcriptRepository.deleteAll();
-        transcriptAccessInquiryRepository.deleteAll(); // Clean up inquiries before each transcript setup
-
         transcript1 = Transcript.builder()
                 .hodId(hod135Id)
                 .studentId(student_135_1_id)
@@ -648,13 +605,11 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
     }
 
     private void setUpUsers() {
-        userRepository.deleteAll();
-
         hod135Id = UUID.randomUUID().toString();
         User hod135 = User.builder()
                 .userId(hod135Id)
                 .fullName("HOD 135")
-                .departmentId("135")
+                .departmentId(department135Id)
                 .role(Role.HOD)
                 .email("hod135@email.com")
                 .password("passhod135")
@@ -665,7 +620,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User hod182 = User.builder()
                 .userId(hod182Id)
                 .fullName("HOD 182")
-                .departmentId("182")
+                .departmentId(department182Id)
                 .role(Role.HOD)
                 .email("hod182@email.com")
                 .password("passhod182")
@@ -676,7 +631,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User supervisor135_1 = User.builder()
                 .userId(supervisor_135_1_id)
                 .fullName("Supervisor 135_1")
-                .departmentId("135")
+                .departmentId(department135Id)
                 .role(Role.SUPERVISOR)
                 .email("supervisor135_1@email.com")
                 .password("passsup135_1")
@@ -687,7 +642,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User supervisor135_2 = User.builder()
                 .userId(supervisor_135_2_id)
                 .fullName("Supervisor 135_2")
-                .departmentId("135")
+                .departmentId(department135Id)
                 .role(Role.SUPERVISOR)
                 .email("supervisor135_2@email.com")
                 .password("passsup135_2")
@@ -698,7 +653,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User supervisor135_3 = User.builder()
                 .userId(supervisor_135_3_id)
                 .fullName("Supervisor 135_3")
-                .departmentId("135")
+                .departmentId(department135Id)
                 .role(Role.SUPERVISOR)
                 .email("supervisor135_3@email.com")
                 .password("passsup135_3")
@@ -709,7 +664,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User supervisor135_4 = User.builder()
                 .userId(supervisor_135_4_id)
                 .fullName("Supervisor 135_4")
-                .departmentId("135")
+                .departmentId(department135Id)
                 .role(Role.SUPERVISOR)
                 .email("supervisor135_4@email.com")
                 .password("passsup135_4")
@@ -720,7 +675,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User supervisor135_5 = User.builder()
                 .userId(supervisor_135_5_id)
                 .fullName("Supervisor 135_5")
-                .departmentId("135")
+                .departmentId(department135Id)
                 .role(Role.SUPERVISOR)
                 .email("supervisor135_5@email.com")
                 .password("passsup135_5")
@@ -731,7 +686,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User supervisor182_1 = User.builder()
                 .userId(supervisor_182_1_id)
                 .fullName("Supervisor 182_1")
-                .departmentId("182")
+                .departmentId(department182Id)
                 .role(Role.SUPERVISOR)
                 .email("supervisor182_1@email.com")
                 .password("passsup182_1")
@@ -742,7 +697,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User student135_1 = User.builder()
                 .userId(student_135_1_id)
                 .fullName("Student 135_1")
-                .departmentId("135")
+                .departmentId(department135Id)
                 .role(Role.STUDENT)
                 .email("student135_1@email.com")
                 .password("passstd135_1")
@@ -754,7 +709,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User student182_1 = User.builder()
                 .userId(student_182_1_id)
                 .fullName("Student 182_1")
-                .departmentId("182")
+                .departmentId(department182Id)
                 .role(Role.STUDENT)
                 .email("student182_1@email.com")
                 .password("passstd182_1")
@@ -766,7 +721,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         User student182_2 = User.builder()
                 .userId(student_182_2_id)
                 .fullName("Student 182_2")
-                .departmentId("182")
+                .departmentId(department182Id)
                 .role(Role.STUDENT)
                 .email("student182_2@email.com")
                 .password("passstd182_2")
@@ -785,7 +740,6 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                 supervisor182_1,
                 student135_1,
                 student182_1,
-                student182_2
-        ));
+                student182_2));
     }
 }

@@ -17,7 +17,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-@ToString(of = {"userId", "role", "departmentId"})
+@ToString(of = { "userId", "role", "departmentId" })
 public class User {
     @Id
     @Column(name = "user_id")
@@ -44,7 +44,7 @@ public class User {
     @Column(name = "public_key")
     private String publicKey;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", insertable = false, updatable = false)
     private Department department;
@@ -57,12 +57,8 @@ public class User {
     private String supervisorId;
 
     public UserDto toDto(boolean includeDepartment) {
-        Optional<DepartmentDto> departmentDto;
-        if (includeDepartment) {
-            departmentDto = Optional.of(this.department.toDto());
-        } else {
-            departmentDto = Optional.empty();
-        }
+        Optional<DepartmentDto> departmentDto = Optional
+                .ofNullable(includeDepartment ? this.department.toDto() : null);
         return new UserDto(
                 userId,
                 email,
@@ -71,7 +67,6 @@ public class User {
                 publicKey,
                 departmentDto,
                 departmentId,
-                supervisorId
-        );
+                supervisorId);
     }
 }

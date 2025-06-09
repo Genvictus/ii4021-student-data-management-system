@@ -1,6 +1,5 @@
 package com.std_data_mgmt.unit.utils;
 
-
 import com.std_data_mgmt.app.entities.TranscriptAccessInquiryParticipant;
 import com.std_data_mgmt.app.utils.TranscriptAccessInquiryParticipantConverter;
 import org.junit.jupiter.api.Test;
@@ -13,21 +12,19 @@ public class TranscriptAccessInquiryParticipantConverterTest {
 
     private final TranscriptAccessInquiryParticipantConverter converter = new TranscriptAccessInquiryParticipantConverter();
 
-
     @Test
     void testConvertToDatabaseColumn() {
         List<TranscriptAccessInquiryParticipant> participants = List.of(
                 TranscriptAccessInquiryParticipant.builder()
                         .id("111222333444")
-                        .public_key("public_key_1")
-                        .encrypted_share("share_1")
+                        .publicKey("public_key_1")
+                        .encryptedShare("share_1")
                         .build(),
                 TranscriptAccessInquiryParticipant.builder()
                         .id("555666777888")
-                        .public_key("public_key_2")
-                        .encrypted_share("share_2")
-                        .build()
-        );
+                        .publicKey("public_key_2")
+                        .encryptedShare("share_2")
+                        .build());
 
         String json = converter.convertToDatabaseColumn(participants);
 
@@ -41,8 +38,8 @@ public class TranscriptAccessInquiryParticipantConverterTest {
             TranscriptAccessInquiryParticipant parsed = deserialized.get(i);
 
             assertEquals(original.getId(), parsed.getId());
-            assertEquals(original.getPublic_key(), parsed.getPublic_key());
-            assertEquals(original.getEncrypted_share(), parsed.getEncrypted_share());
+            assertEquals(original.getPublicKey(), parsed.getPublicKey());
+            assertEquals(original.getEncryptedShare(), parsed.getEncryptedShare());
         }
     }
 
@@ -51,15 +48,14 @@ public class TranscriptAccessInquiryParticipantConverterTest {
         List<TranscriptAccessInquiryParticipant> participants = List.of(
                 TranscriptAccessInquiryParticipant.builder()
                         .id("111222333444")
-                        .public_key("public_key_1")
-                        .encrypted_share(null)
+                        .publicKey("public_key_1")
+                        .encryptedShare(null)
                         .build(),
                 TranscriptAccessInquiryParticipant.builder()
                         .id("555666777888")
-                        .public_key("public_key_2")
-                        .encrypted_share(null)
-                        .build()
-        );
+                        .publicKey("public_key_2")
+                        .encryptedShare(null)
+                        .build());
 
         String json = converter.convertToDatabaseColumn(participants);
 
@@ -73,11 +69,10 @@ public class TranscriptAccessInquiryParticipantConverterTest {
             TranscriptAccessInquiryParticipant parsed = deserialized.get(i);
 
             assertEquals(original.getId(), parsed.getId());
-            assertEquals(original.getPublic_key(), parsed.getPublic_key());
-            assertNull(parsed.getEncrypted_share());
+            assertEquals(original.getPublicKey(), parsed.getPublicKey());
+            assertNull(parsed.getEncryptedShare());
         }
     }
-
 
     @Test
     void testConvertToEntityAttribute() {
@@ -95,15 +90,14 @@ public class TranscriptAccessInquiryParticipantConverterTest {
 
         TranscriptAccessInquiryParticipant first = participants.getFirst();
         assertEquals("111222333444", first.getId());
-        assertEquals("public_key_1", first.getPublic_key());
-        assertEquals("share_1", first.getEncrypted_share());
+        assertEquals("public_key_1", first.getPublicKey());
+        assertEquals("share_1", first.getEncryptedShare());
 
         TranscriptAccessInquiryParticipant second = participants.get(1);
         assertEquals("555666777888", second.getId());
-        assertEquals("public_key_2", second.getPublic_key());
-        assertEquals("share_2", second.getEncrypted_share());
+        assertEquals("public_key_2", second.getPublicKey());
+        assertEquals("share_2", second.getEncryptedShare());
     }
-
 
     @Test
     void testConvertEmptyOrNull() {

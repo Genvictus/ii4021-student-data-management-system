@@ -13,51 +13,46 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-    private final UserService userService;
+        private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping("/{id}")
-    public FormattedResponseEntity<UserDto> getUserById(
-            @PathVariable("id") String id
-    ) {
-        Optional<User> foundUser = this.userService.getUserById(id);
-        if (foundUser.isEmpty()) {
-            return new FormattedResponseEntity<>(
-                    HttpStatus.NOT_FOUND,
-                    false,
-                    "User with id " + id + " not found",
-                    null
-            );
+        public UserController(UserService userService) {
+                this.userService = userService;
         }
 
-        UserDto userDto = foundUser.get().toDto(false);
-        return new FormattedResponseEntity<>(
-                HttpStatus.OK,
-                true,
-                "ok",
-                userDto
-        );
-    }
+        @GetMapping("/{id}")
+        public FormattedResponseEntity<UserDto> getUserById(
+                        @PathVariable("id") String id) {
+                Optional<User> foundUser = this.userService.getUserById(id);
+                if (foundUser.isEmpty()) {
+                        return new FormattedResponseEntity<>(
+                                        HttpStatus.NOT_FOUND,
+                                        false,
+                                        "User with id " + id + " not found",
+                                        null);
+                }
 
-    @GetMapping
-    public FormattedResponseEntity<List<UserDto>> getUsers(
-            @RequestParam Optional<String> departmentId,
-            @RequestParam Optional<String> supervisorId
-    ) {
+                UserDto userDto = foundUser.get().toDto(false);
+                return new FormattedResponseEntity<>(
+                                HttpStatus.OK,
+                                true,
+                                "ok",
+                                userDto);
+        }
 
-        List<User> users = this.userService.getUsers(departmentId, supervisorId);
-        List<UserDto> userDtos = users.stream()
-                .map(user -> user.toDto(false))
-                .toList();
+        @GetMapping
+        public FormattedResponseEntity<List<UserDto>> getUsers(
+                        @RequestParam Optional<String> departmentId,
+                        @RequestParam Optional<String> supervisorId) {
 
-        return new FormattedResponseEntity<>(
-                HttpStatus.OK,
-                true,
-                "Users found successfully",
-                userDtos
-        );
-    }
+                List<User> users = this.userService.getUsers(departmentId, supervisorId);
+                List<UserDto> userDtos = users.stream()
+                                .map(user -> user.toDto(false))
+                                .toList();
+
+                return new FormattedResponseEntity<>(
+                                HttpStatus.OK,
+                                true,
+                                "Users found successfully",
+                                userDtos);
+        }
 }

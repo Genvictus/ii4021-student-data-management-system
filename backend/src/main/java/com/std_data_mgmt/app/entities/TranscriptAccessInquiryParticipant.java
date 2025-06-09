@@ -1,18 +1,25 @@
 package com.std_data_mgmt.app.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class TranscriptAccessInquiryParticipant {
+    @NonNull
     private String id;
-    private String public_key;
-    private String encrypted_share;
+    private String encryptedShare;
+    @JsonIgnore
+    private String publicKey;
 }
