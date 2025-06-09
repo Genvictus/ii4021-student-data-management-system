@@ -24,6 +24,9 @@ public class Course {
     @Column(name = "code")
     private String code;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "credits")
     private Integer credits;
 
@@ -34,6 +37,7 @@ public class Course {
         return new CourseDto(
                 this.courseId,
                 this.code,
+                this.name,
                 this.credits,
                 this.departmentId
         );
