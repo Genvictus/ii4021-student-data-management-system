@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -423,11 +424,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_3_id);
         transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(), supervisor_135_4_id);
 
-        List<String> encryptedShares = List.of(
-                "encrypted share 1",
-                "encrypted share 2",
-                "encrypted share 3",
-                "encrypted share 4"
+        Map<String, String> encryptedShares = Map.of(
+                supervisor_135_2_id, "encrypted share 1",
+                supervisor_135_3_id, "encrypted share 2",
+                supervisor_135_4_id, "encrypted share 3"
         );
 
         // WHEN
