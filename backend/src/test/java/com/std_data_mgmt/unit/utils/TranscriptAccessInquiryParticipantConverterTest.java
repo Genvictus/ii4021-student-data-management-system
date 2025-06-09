@@ -38,7 +38,6 @@ public class TranscriptAccessInquiryParticipantConverterTest {
             TranscriptAccessInquiryParticipant parsed = deserialized.get(i);
 
             assertEquals(original.getId(), parsed.getId());
-            assertEquals(original.getPublicKey(), parsed.getPublicKey());
             assertEquals(original.getEncryptedShare(), parsed.getEncryptedShare());
         }
     }
@@ -48,12 +47,10 @@ public class TranscriptAccessInquiryParticipantConverterTest {
         List<TranscriptAccessInquiryParticipant> participants = List.of(
                 TranscriptAccessInquiryParticipant.builder()
                         .id("111222333444")
-                        .publicKey("public_key_1")
                         .encryptedShare(null)
                         .build(),
                 TranscriptAccessInquiryParticipant.builder()
                         .id("555666777888")
-                        .publicKey("public_key_2")
                         .encryptedShare(null)
                         .build());
 
@@ -69,7 +66,6 @@ public class TranscriptAccessInquiryParticipantConverterTest {
             TranscriptAccessInquiryParticipant parsed = deserialized.get(i);
 
             assertEquals(original.getId(), parsed.getId());
-            assertEquals(original.getPublicKey(), parsed.getPublicKey());
             assertNull(parsed.getEncryptedShare());
         }
     }
@@ -78,8 +74,8 @@ public class TranscriptAccessInquiryParticipantConverterTest {
     void testConvertToEntityAttribute() {
         String json = """
                 [
-                    {"id":"111222333444","public_key":"public_key_1","encrypted_share":"share_1"},
-                    {"id":"555666777888","public_key":"public_key_2","encrypted_share":"share_2"}
+                    {"id":"111222333444","encryptedShare":"share_1"},
+                    {"id":"555666777888","encryptedShare":"share_2"}
                 ]
                 """;
 
@@ -90,12 +86,10 @@ public class TranscriptAccessInquiryParticipantConverterTest {
 
         TranscriptAccessInquiryParticipant first = participants.getFirst();
         assertEquals("111222333444", first.getId());
-        assertEquals("public_key_1", first.getPublicKey());
         assertEquals("share_1", first.getEncryptedShare());
 
         TranscriptAccessInquiryParticipant second = participants.get(1);
         assertEquals("555666777888", second.getId());
-        assertEquals("public_key_2", second.getPublicKey());
         assertEquals("share_2", second.getEncryptedShare());
     }
 

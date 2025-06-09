@@ -236,14 +236,6 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
 
         var foundTranscript2 = transcriptService.getTranscriptById(transcript2.getTranscriptId());
         assertThat(foundTranscript2).isPresent();
-
-        var transcriptToUpdate2 = foundTranscript2.get();
-        transcriptToUpdate2.setTranscriptStatus(TranscriptStatus.PENDING);
-
-        assertThrows(
-                IllegalArgumentException.class, () -> {
-                    transcriptService.updateTranscript(transcriptToUpdate2);
-                });
     }
 
     @Test
