@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         return new FormattedResponseEntity<>(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 false,
-                e.getMessage(),
+                "Error occurred on the server",
                 null
         );
     }
