@@ -41,7 +41,7 @@ public class User {
     private Role role;
 
     @NonNull
-    @Column(name = "public_key")
+    @Column(name = "public_key", columnDefinition = "text")
     private String publicKey;
 
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })

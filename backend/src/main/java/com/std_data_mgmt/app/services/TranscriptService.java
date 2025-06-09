@@ -49,8 +49,7 @@ public class TranscriptService {
     public void updateTranscript(Transcript transcript) {
         // Ensure that the sign property cannot be updated, so transcript.signature must
         // be null when the transcript is updated
-        if (transcript.getHodDigitalSignature() != null
-                && transcript.getTranscriptStatus() != null) {
+        if (transcript.getHodDigitalSignature() != null) {
             throw new IllegalArgumentException("Can not update digital signature");
         }
 
@@ -68,6 +67,9 @@ public class TranscriptService {
 
     public void signTranscript(String transcriptId, String signature) {
         var transcript = this.transcriptRepository.findById(transcriptId).get();
+        if (transcript.getTranscriptStatus().equals(TranscriptStatus.APPROVED)) {
+            throw new IllegalArgumentException("Can not approve transcript that has been approved");
+        }
         transcript.setHodDigitalSignature(signature);
         transcript.setTranscriptStatus(TranscriptStatus.APPROVED);
         this.transcriptRepository.save(transcript);
@@ -93,7 +95,6 @@ public class TranscriptService {
         }
 
         var newParticipant = new TranscriptAccessInquiryParticipant(requesterId);
-
         TranscriptAccessInquiry accessInquiry = new TranscriptAccessInquiry(
                 requesterId,
                 requesteeId,
@@ -110,12 +111,17 @@ public class TranscriptService {
     public void joinTranscriptAccessInquiry(String inquiryId, String participantId, String participantDepartmentId) {
         // Check inquiry status if new participants are able to join
         var transcriptAccessInquiry = this.transcriptAccessInquiryRepository.findWithRequestee(inquiryId).get();
+        // Check if participant is the requestee (intended supervisor)
+        if (participantId.equals(transcriptAccessInquiry.getRequesteeId())) {
+            throw new IllegalArgumentException("The requestee may not join as another participant");
+        }
+        // Check if status permits joining
         var inquiryStatus = transcriptAccessInquiry.getInquiryStatus();
         if (!(inquiryStatus.equals(TranscriptAccessInquiryStatus.WAITING_FOR_PARTICIPANTS)
                 || inquiryStatus.equals(TranscriptAccessInquiryStatus.WAITING_FOR_REQUESTEE))) {
             throw new IllegalArgumentException("Inquiry does not accept participants");
         }
-
+        // Check if participant is from the correct department
         var requesteeDepartment = transcriptAccessInquiry.getRequestee().getDepartmentId();
         if (!requesteeDepartment.equals(participantDepartmentId)) {
             throw new IllegalArgumentException("Participant is not from the same department!");
@@ -123,7 +129,7 @@ public class TranscriptService {
 
         // Create new participant entity
         var newParticipant = new TranscriptAccessInquiryParticipant(participantId);
-
+        // Check if participant has joined
         var participants = transcriptAccessInquiry.getParticipants();
         if (participants.contains(newParticipant)) {
             throw new IllegalArgumentException(String.format("User with ID %s already joined", participantId));

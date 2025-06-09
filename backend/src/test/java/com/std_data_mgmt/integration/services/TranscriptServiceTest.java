@@ -214,7 +214,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                 .transcriptStatus(TranscriptStatus.PENDING)
                 .build();
 
-        transcriptService.updateTranscript(transcript);
+        assertThrows(
+                IllegalArgumentException.class, () -> {
+                    transcriptService.updateTranscript(transcript);
+                });
     }
 
     @Test
@@ -393,7 +396,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                 IllegalArgumentException.class, () -> {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
-                            supervisor_135_2_id, // Requestee trying to join
+                            supervisor_135_1_id, // Requestee trying to join
                             department135Id);
                 });
     }
@@ -451,8 +454,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
 
         var participants = approvedInquiry.getParticipants();
         var approvedInquiryEncryptedShares = participants.stream()
-                .map(TranscriptAccessInquiryParticipant::getEncryptedShare);
-        assertThat(approvedInquiryEncryptedShares).isEqualTo(encryptedShares);
+                .map(TranscriptAccessInquiryParticipant::getEncryptedShare).toList();
+        var generatedInquiryEncryptedShares = participants.stream()
+                .map(p -> encryptedShares.get(p.getId())).toList();
+        assertThat(approvedInquiryEncryptedShares).isEqualTo(generatedInquiryEncryptedShares);
     }
 
     @Test

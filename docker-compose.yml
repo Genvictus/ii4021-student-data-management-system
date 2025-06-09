@@ -42,7 +42,7 @@ services:
           path: ./backend
 
   postgres-dev:
-    profiles: [ "dev", "dev-light" ]
+    profiles: [ "dev", "dev-light", "db" ]
     ports:
       - "5433:5432"
     image: postgres:17-alpine
@@ -58,7 +58,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-postgres}
 
   pgadmin:
-    profiles: [ "dev", "dev-light" ]
+    profiles: [ "dev", "dev-light", "db" ]
     image: dpage/pgadmin4:9.4
     networks:
       dev-network:
