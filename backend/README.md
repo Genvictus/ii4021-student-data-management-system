@@ -12,11 +12,13 @@
 ## Getting Started
 
 1. Copy environment variable template
+
     ```
     cp .env.example .env
     ```
 
 2. Set up public/private key pair for jwt signing
+
     ```
     mkdir .secrets
     ```
@@ -51,8 +53,9 @@ There are two options (pick one):
 1. Run the docker compose with the `dev` profile (simpler)
 
    The `dev` profile will build the jar inside the container with multi-stage build. It might take some time
+
     ```
-   docker compose --profile dev up
+    docker compose --profile dev up
     ```
 
 2. Run the docker compose with the `dev-light` profile (lighter)
@@ -61,12 +64,12 @@ There are two options (pick one):
    have auto-build feature like IntelliJ
     - Build the jar (you can skip this part if it's already built before, or if it's automatically built)
         ```
-      ./gradlew build
-      ```
+        ./gradlew build
+        ```
     - Run the docker compose
         ```
-       docker compose --profile dev-light up
-       ```
+        docker compose --profile dev-light up
+        ```
 
 #### 💡 Pro Tip: Run with `--watch` command to enable hot reload. It works for both the `dev` and `dev-light` profile
 
@@ -82,40 +85,46 @@ docker compose --profile dev-light up --watch
 
 1. Run the database container
     ```
-     docker compose up postgres-dev
+     docker compose --profile db up
     ```
 2. Build the jar
     ```
-   ./gradlew build
-   ```
+    ./gradlew build
+    ```
 3. Run the jar
     ```
-   java -jar build/libs/app-0.0.1-SNAPSHOT.jar -Dspring.profiles.active=dev
-   ```
+    java -jar build/libs/app-0.0.1-SNAPSHOT.jar -Dspring.profiles.active=dev
+    ```
 
 ## Development
 
-1. To build the jar
+1. To build-test the jar
     ```
     ./gradlew build
     ```
+   To build without test
+   ```
+   ./gradlew build -x test
+   ```
 2. To test
     - Run the entire tests
         ```
-        ./gradlew test 
+        ./gradlew test
         ```
     - Run an individual test
         ```
         ./gradlew test --tests com.std_data_mgmt.app.config.ApplicationTests
         ```
 3. To run
-   ```
-   java -jar build/libs/app-0.0.1-SNAPSHOT.jar -Dspring.profiles.active=dev
     ```
-4. To bootRun
+    java -jar build/libs/app-0.0.1-SNAPSHOT.jar -Dspring.profiles.active=dev
     ```
-    ./gradlew bootRun
+4. To bootRun (build-run at once)
+
     ```
+    ./gradlew bootRun --args='--spring.profiles.active=dev'
+    ```
+
 5. To add dependency
 
     - Add dependency in build.gradle, could be `developmentOnly`, `runtimeOnly`, `implementation`, `testRuntimeOnly`, or
@@ -128,5 +137,5 @@ docker compose --profile dev-light up --watch
         ```
     - Build the jar
         ```
-      ./gradlew build
-      ```
+        ./gradlew build
+        ```

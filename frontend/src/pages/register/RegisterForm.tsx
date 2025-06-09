@@ -89,7 +89,7 @@ export function RegisterForm() {
             });
 
             setTimeout(() => {
-                navigate({ to: "/register" });
+                navigate({ to: "/login" });
             }, 500);
         } else {
             toast.error("Register Failed", {
