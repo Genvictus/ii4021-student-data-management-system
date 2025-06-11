@@ -8,9 +8,16 @@ import App from "./App";
 import { Login } from "@/pages/login";
 import { Register } from "@/pages/register";
 import { Home, homeLoader } from "@/pages/home";
+import { Index } from "./pages";
 
 const rootRoute = createRootRoute({
     component: App,
+});
+
+const indexRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/",
+    component: Index,
 });
 
 const loginRoute = createRoute({
@@ -32,7 +39,12 @@ const homeRoute = createRoute({
     loader: homeLoader,
 });
 
-const routeTree = rootRoute.addChildren([loginRoute, registerRoute, homeRoute]);
+const routeTree = rootRoute.addChildren([
+    indexRoute,
+    loginRoute,
+    registerRoute,
+    homeRoute,
+]);
 
 export const router = createRouter({ routeTree });
 
