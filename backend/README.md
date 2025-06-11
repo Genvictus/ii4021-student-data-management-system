@@ -113,7 +113,7 @@ docker compose --profile dev-light up --watch
         ```
     - Run an individual test
         ```
-        ./gradlew test --tests com.std_data_mgmt.app.config.ApplicationTests
+        ./gradlew test --tests com.std_data_mgmt.app.ApplicationTests.java
         ```
 3. To run
     ```
