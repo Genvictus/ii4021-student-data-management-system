@@ -65,8 +65,13 @@ function HodMenu() {
 }
 
 function ViewTranscriptMenuItem() {
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate({ to: "/transcript" });
+    };
+
     return (
-        <Button className="w-full gap-2" size="lg">
+        <Button className="w-full gap-2" size="lg" onClick={handleClick}>
             <ScrollText className="w-5 h-5" />
             <span className="text-xl">View Transcript</span>
         </Button>
@@ -74,8 +79,13 @@ function ViewTranscriptMenuItem() {
 }
 
 function ViewCoursesMenuItem() {
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate({ to: "/courses" });
+    };
+
     return (
-        <Button className="w-full gap-2" size="lg">
+        <Button className="w-full gap-2" size="lg" onClick={handleClick}>
             <BookOpen className="w-5 h-5" />
             <span className="text-xl">View Courses</span>
         </Button>
@@ -83,8 +93,13 @@ function ViewCoursesMenuItem() {
 }
 
 function ViewInquiriesMenuItem() {
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate({ to: "/inquiries" });
+    };
+
     return (
-        <Button className="w-full gap-2" size="lg">
+        <Button className="w-full gap-2" size="lg" onClick={handleClick}>
             <MessagesSquare className="w-5 h-5" />
             <span className="text-xl">View Inquiries</span>
         </Button>
@@ -97,6 +112,7 @@ function LogoutMenuItem() {
         logout();
         navigate({ to: "/login" });
     };
+
     return (
         <Button className="w-full gap-2" size="lg" onClick={handleLogout}>
             <LogOut className="w-5 h-5" />
@@ -106,8 +122,12 @@ function LogoutMenuItem() {
 }
 
 function ViewStudentsMenuitem() {
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate({ to: "/students" });
+    };
     return (
-        <Button className="w-full gap-2" size="lg">
+        <Button className="w-full gap-2" size="lg" onClick={handleClick}>
             <Users className="w-5 h-5" />
             <span className="text-xl">View Students</span>
         </Button>

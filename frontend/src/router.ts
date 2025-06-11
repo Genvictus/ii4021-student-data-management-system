@@ -9,6 +9,10 @@ import { Login } from "@/pages/login";
 import { Register } from "@/pages/register";
 import { Home, homeLoader } from "@/pages/home";
 import { Index } from "./pages";
+import { Courses, coursesLoader } from "./pages/courses";
+import { Inquiries, inquiriesLoader } from "./pages/inquiries";
+import { Students, studentsLoader } from "./pages/students";
+import { Transcript, transcriptLoader } from "./pages/transcript";
 
 const rootRoute = createRootRoute({
     component: App,
@@ -39,11 +43,43 @@ const homeRoute = createRoute({
     loader: homeLoader,
 });
 
+const coursesRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/courses",
+    component: Courses,
+    loader: coursesLoader,
+});
+
+const inquiriesRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/inquiries",
+    component: Inquiries,
+    loader: inquiriesLoader,
+});
+
+const studentsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/students",
+    component: Students,
+    loader: studentsLoader,
+});
+
+const transcriptRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/transcript",
+    component: Transcript,
+    loader: transcriptLoader,
+});
+
 const routeTree = rootRoute.addChildren([
     indexRoute,
     loginRoute,
     registerRoute,
     homeRoute,
+    coursesRoute,
+    inquiriesRoute,
+    studentsRoute,
+    transcriptRoute,
 ]);
 
 export const router = createRouter({ routeTree });
