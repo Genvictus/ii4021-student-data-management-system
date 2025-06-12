@@ -2,7 +2,6 @@ package com.std_data_mgmt.app.security.rbac;
 
 import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.exceptions.InsufficientRoleException;
-import com.std_data_mgmt.app.exceptions.UnauthenticatedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -45,10 +44,6 @@ public class RoleAuthorizationInterceptor implements HandlerInterceptor {
 
         // Get current user's authentication
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new UnauthenticatedException();
-        }
 
         // Extract user's role
         String userRole = extractUserRole(auth);

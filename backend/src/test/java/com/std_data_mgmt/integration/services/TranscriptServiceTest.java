@@ -123,7 +123,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(transcript);
-                });
+                }
+        );
     }
 
     @Test
@@ -166,15 +167,18 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(presignedTranscript);
-                });
+                }
+        );
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(approvedUnsignedTranscript);
-                });
+                }
+        );
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.createTranscript(pendingPresignedTranscript);
-                });
+                }
+        );
     }
 
     @Test
@@ -188,7 +192,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         List<TranscriptEntry> newTranscriptData = List.of(
                 new TranscriptEntry("IF2211", 3, Score.C),
                 new TranscriptEntry("IF2240", 3, Score.B),
-                new TranscriptEntry("IF4033", 3, Score.BC));
+                new TranscriptEntry("IF4033", 3, Score.BC)
+        );
         transcriptToUpdate.setEncryptedTranscriptData(newTranscriptData);
 
         transcriptService.updateTranscript(transcriptToUpdate);
@@ -217,7 +222,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.updateTranscript(transcript);
-                });
+                }
+        );
     }
 
     @Test
@@ -232,7 +238,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.updateTranscript(transcriptToUpdate1);
-                });
+                }
+        );
 
         var foundTranscript2 = transcriptService.getTranscriptById(transcript2.getTranscriptId());
         assertThat(foundTranscript2).isPresent();
@@ -256,9 +263,12 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var digitalSignature = "digital signature";
         assertThrows(
                 IllegalArgumentException.class, () -> {
-                    transcriptService.signTranscript(transcript2.getTranscriptId(),
-                            digitalSignature);
-                });
+                    transcriptService.signTranscript(
+                            transcript2.getTranscriptId(),
+                            digitalSignature
+                    );
+                }
+        );
     }
 
     @Test
@@ -282,7 +292,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var transcriptAccessInquiryToCreate = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
+                department135Id
+        );
 
         var inquiries = transcriptService.getTranscriptAccessInquiries();
         assertThat(inquiries.size()).isEqualTo(1);
@@ -304,13 +315,15 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
+                department135Id
+        );
 
         // WHEN
         transcriptService.joinTranscriptAccessInquiry(
                 createdInquiry.getInquiryId(),
                 supervisor_135_3_id,
-                department135Id);
+                department135Id
+        );
 
         // THEN
         var inquiries = transcriptService.getTranscriptAccessInquiries();
@@ -319,8 +332,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThat(updatedInquiry.getInquiryStatus())
                 .isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_REQUESTEE);
         assertThat(updatedInquiry.getParticipants()
-                .stream()
-                .anyMatch(p -> p.getId().equals(supervisor_135_3_id))).isTrue();
+                           .stream()
+                           .anyMatch(p -> p.getId().equals(supervisor_135_3_id))).isTrue();
     }
 
     @Test
@@ -330,16 +343,20 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                department135Id
+        );
+        transcriptService.joinTranscriptAccessInquiry(
+                createdInquiry.getInquiryId(),
                 supervisor_135_3_id,
-                department135Id);
+                department135Id
+        );
 
         // WHEN
         transcriptService.joinTranscriptAccessInquiry(
                 createdInquiry.getInquiryId(),
                 supervisor_135_4_id,
-                department135Id);
+                department135Id
+        );
 
         // THEN
         var inquiries = transcriptService.getTranscriptAccessInquiries();
@@ -348,8 +365,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         assertThat(updatedInquiry.getInquiryStatus())
                 .isEqualTo(TranscriptAccessInquiryStatus.WAITING_FOR_REQUESTEE);
         assertThat(updatedInquiry.getParticipants()
-                .stream()
-                .anyMatch(p -> p.getId().equals(supervisor_135_4_id))).isTrue();
+                           .stream()
+                           .anyMatch(p -> p.getId().equals(supervisor_135_4_id))).isTrue();
     }
 
     @Test
@@ -359,10 +376,13 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                department135Id
+        );
+        transcriptService.joinTranscriptAccessInquiry(
+                createdInquiry.getInquiryId(),
                 supervisor_135_3_id,
-                department135Id);
+                department135Id
+        );
 
         // WHEN & THEN
         assertThrows(
@@ -370,8 +390,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
                             supervisor_135_3_id, // Trying to join again
-                            department135Id);
-                });
+                            department135Id
+                    );
+                }
+        );
     }
 
     @Test
@@ -381,7 +403,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
+                department135Id
+        );
 
         // WHEN & THEN
         assertThrows(
@@ -389,8 +412,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
                             supervisor_135_1_id, // Requestee trying to join
-                            department135Id);
-                });
+                            department135Id
+                    );
+                }
+        );
     }
 
     @Test
@@ -400,7 +425,8 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
+                department135Id
+        );
 
         // WHEN & THEN
         assertThrows(
@@ -408,8 +434,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
                             supervisor_182_1_id, // From different department
-                            department182Id);
-                });
+                            department182Id
+                    );
+                }
+        );
     }
 
     @Test
@@ -419,23 +447,31 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                department135Id
+        );
+        transcriptService.joinTranscriptAccessInquiry(
+                createdInquiry.getInquiryId(),
                 supervisor_135_3_id,
-                department135Id);
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                department135Id
+        );
+        transcriptService.joinTranscriptAccessInquiry(
+                createdInquiry.getInquiryId(),
                 supervisor_135_4_id,
-                department135Id);
+                department135Id
+        );
 
         Map<String, String> encryptedShares = Map.of(
                 supervisor_135_2_id, "encrypted share 1",
                 supervisor_135_3_id, "encrypted share 2",
-                supervisor_135_4_id, "encrypted share 3");
+                supervisor_135_4_id, "encrypted share 3"
+        );
 
         // WHEN
         transcriptService.approveTranscriptAccessInquiry(
                 createdInquiry.getInquiryId(),
-                encryptedShares);
+                encryptedShares,
+                createdInquiry.getRequesteeId()
+        );
 
         // THEN
         var inquiries = transcriptService.getTranscriptAccessInquiries();
@@ -459,13 +495,16 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                department135Id
+        );
+        transcriptService.joinTranscriptAccessInquiry(
+                createdInquiry.getInquiryId(),
                 supervisor_135_3_id,
-                department135Id);
+                department135Id
+        );
 
         // WHEN
-        transcriptService.rejectTranscriptAccessInquiry(createdInquiry.getInquiryId());
+        transcriptService.rejectTranscriptAccessInquiry(createdInquiry.getInquiryId(), createdInquiry.getRequesteeId());
 
         // THEN
         var inquiries = transcriptService.getTranscriptAccessInquiries();
@@ -481,14 +520,21 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.joinTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                department135Id
+        );
+        transcriptService.joinTranscriptAccessInquiry(
+                createdInquiry.getInquiryId(),
                 supervisor_135_3_id,
-                department135Id);
-        transcriptService.approveTranscriptAccessInquiry(createdInquiry.getInquiryId(),
+                department135Id
+        );
+        transcriptService.approveTranscriptAccessInquiry(
+                createdInquiry.getInquiryId(),
                 Map.of(
                         supervisor_135_2_id, "share1",
-                        supervisor_135_3_id, "share2"));
+                        supervisor_135_3_id, "share2"
+                ),
+                createdInquiry.getRequesteeId()
+        );
 
         // WHEN & THEN
         assertThrows(
@@ -496,8 +542,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
                             supervisor_135_4_id,
-                            department135Id);
-                });
+                            department135Id
+                    );
+                }
+        );
     }
 
     @Test
@@ -507,8 +555,9 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var createdInquiry = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.rejectTranscriptAccessInquiry(createdInquiry.getInquiryId());
+                department135Id
+        );
+        transcriptService.rejectTranscriptAccessInquiry(createdInquiry.getInquiryId(), createdInquiry.getRequesteeId());
 
         // WHEN & THEN
         assertThrows(
@@ -516,8 +565,10 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                     transcriptService.joinTranscriptAccessInquiry(
                             createdInquiry.getInquiryId(),
                             supervisor_135_3_id,
-                            department135Id);
-                });
+                            department135Id
+                    );
+                }
+        );
     }
 
     @Test
@@ -527,53 +578,75 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
         var inquiryWaitingForParticipants = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
+                department135Id
+        );
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.approveTranscriptAccessInquiry(
                             inquiryWaitingForParticipants.getInquiryId(),
-                            Map.of(supervisor_135_2_id, "share1"));
-                });
+                            Map.of(supervisor_135_2_id, "share1"),
+                            inquiryWaitingForParticipants.getRequesteeId()
+                    );
+                }
+        );
 
         // GIVEN: Inquiry in APPROVED status
         var inquiryApproved = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.joinTranscriptAccessInquiry(inquiryApproved.getInquiryId(),
+                department135Id
+        );
+        transcriptService.joinTranscriptAccessInquiry(
+                inquiryApproved.getInquiryId(),
                 supervisor_135_3_id,
-                department135Id);
-        transcriptService.approveTranscriptAccessInquiry(inquiryApproved.getInquiryId(),
+                department135Id
+        );
+        transcriptService.approveTranscriptAccessInquiry(
+                inquiryApproved.getInquiryId(),
                 Map.of(
                         supervisor_135_2_id, "share1",
-                        supervisor_135_3_id, "share2"));
+                        supervisor_135_3_id, "share2"
+                ),
+                inquiryApproved.getRequesteeId()
+        );
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.approveTranscriptAccessInquiry(
                             inquiryApproved.getInquiryId(),
-                            Map.of(supervisor_135_2_id, "share3", supervisor_135_3_id,
-                                    "share4"));
-                });
+                            Map.of(
+                                    supervisor_135_2_id, "share3",
+                                    supervisor_135_3_id, "share4"
+                            ),
+                            inquiryApproved.getRequesteeId()
+                    );
+                }
+        );
 
         // GIVEN: Inquiry in CLOSED status
         var inquiryClosed = transcriptService.createTranscriptAccessInquiry(
                 transcript1.getTranscriptId(),
                 supervisor_135_2_id,
-                department135Id);
-        transcriptService.rejectTranscriptAccessInquiry(inquiryClosed.getInquiryId());
+                department135Id
+        );
+        transcriptService.rejectTranscriptAccessInquiry(inquiryClosed.getInquiryId(), inquiryClosed.getRequesteeId());
 
         // WHEN & THEN
         assertThrows(
                 IllegalArgumentException.class, () -> {
                     transcriptService.approveTranscriptAccessInquiry(
                             inquiryClosed.getInquiryId(),
-                            Map.of(supervisor_135_2_id, "share5", supervisor_135_3_id,
-                                    "share6"));
-                });
+                            Map.of(
+                                    supervisor_135_2_id, "share5",
+                                    supervisor_135_3_id, "share6"
+                            ),
+                            inquiryClosed.getRequesteeId()
+                    );
+                }
+        );
     }
 
     private void setUpTranscripts() {
@@ -737,6 +810,7 @@ public class TranscriptServiceTest extends BaseIntegrationTest {
                 supervisor182_1,
                 student135_1,
                 student182_1,
-                student182_2));
+                student182_2
+        ));
     }
 }

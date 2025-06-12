@@ -1,9 +1,13 @@
 package com.std_data_mgmt.app.security.jwt;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import com.std_data_mgmt.app.enums.Role;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter implements Filter {
@@ -39,7 +34,8 @@ public class JwtAuthenticationFilter implements Filter {
     public void doFilter(
             ServletRequest request,
             ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+            FilterChain chain
+    ) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String token = resolveToken(httpRequest);
 
@@ -58,12 +54,19 @@ public class JwtAuthenticationFilter implements Filter {
 
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        userId, token,
-                        authorities);
+                var principal = new AuthenticatedUserInfo(
+                        claims.getSubject(),
+                        claims.get("email").toString(),
+                        claims.get("fullName").toString(),
+                        Role.valueOf(claims.get("role").toString()),
+                        claims.get("departmentId").toString()
+                );
 
-                // Pass user information from JWT to requests
-                passUserInfo(httpRequest, claims);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        principal,
+                        token,
+                        authorities
+                );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (ExpiredJwtException e) {
@@ -96,13 +99,5 @@ public class JwtAuthenticationFilter implements Filter {
         }
 
         return null;
-    }
-
-    private void passUserInfo(HttpServletRequest request, Claims claims) {
-        request.setAttribute("userId", claims.getSubject());
-        request.setAttribute("email", claims.get("email"));
-        request.setAttribute("fullName", claims.get("fullName"));
-        request.setAttribute("role", claims.get("role"));
-        request.setAttribute("departmentId", claims.get("departmentId"));
     }
 }

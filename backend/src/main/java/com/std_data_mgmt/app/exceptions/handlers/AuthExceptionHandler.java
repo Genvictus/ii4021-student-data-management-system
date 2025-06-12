@@ -1,5 +1,6 @@
 package com.std_data_mgmt.app.exceptions.handlers;
 
+import com.std_data_mgmt.app.exceptions.ForbiddenException;
 import com.std_data_mgmt.app.exceptions.InsufficientRoleException;
 import com.std_data_mgmt.app.exceptions.UnauthenticatedException;
 import com.std_data_mgmt.app.utils.FormattedResponseEntity;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AuthExceptionHandler {
 
-    @ExceptionHandler(InsufficientRoleException.class)
-    public FormattedResponseEntity<Void> handleInsufficientRole(InsufficientRoleException e) {
+    @ExceptionHandler({InsufficientRoleException.class, ForbiddenException.class})
+    public FormattedResponseEntity<Void> handleInsufficientRoleAndForbidden(RuntimeException e) {
         String message = e.getMessage();
-//        TODO: log the error message
+        // TODO: log the error message
         return new FormattedResponseEntity<>(
                 HttpStatus.FORBIDDEN,
                 false,

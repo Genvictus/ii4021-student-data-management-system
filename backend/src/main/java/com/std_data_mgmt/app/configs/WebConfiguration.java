@@ -1,5 +1,6 @@
 package com.std_data_mgmt.app.configs;
 
+import com.std_data_mgmt.app.security.authentication.AuthenticationCheckInterceptor;
 import com.std_data_mgmt.app.security.rbac.RoleAuthorizationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,13 +17,22 @@ public class WebConfiguration implements WebMvcConfigurer {
     private String[] allowedOrigins;
 
     @Autowired
+    private AuthenticationCheckInterceptor authenticationCheckInterceptor;
+
+    @Autowired
     private RoleAuthorizationInterceptor roleAuthorizationInterceptor;
-    
+
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        registry.addInterceptor(authenticationCheckInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/v1/auth/**")
+                .order(1);
+
         registry.addInterceptor(roleAuthorizationInterceptor)
                 .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/v1/auth/**");
+                .excludePathPatterns("/api/v1/auth/**")
+                .order(2);
     }
 
     @Override
