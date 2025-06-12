@@ -1,6 +1,8 @@
 package com.std_data_mgmt.app.services;
 
+import com.std_data_mgmt.app.entities.Student;
 import com.std_data_mgmt.app.entities.User;
+import com.std_data_mgmt.app.repositories.StudentRepository;
 import com.std_data_mgmt.app.repositories.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
 
     public Optional<User> getUserById(String id) {
         return this.userRepository.findById(id);
@@ -26,5 +29,9 @@ public class UserService {
         supervisorId.ifPresent(probe::setSupervisorId);
 
         return this.userRepository.findAll(Example.of(probe));
+    }
+
+    public List<Student> getUsersWithTranscript(Optional<String> departmentId) {
+        return this.studentRepository.findWithTranscript(departmentId);
     }
 }
