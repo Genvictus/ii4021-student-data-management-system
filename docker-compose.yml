@@ -51,7 +51,7 @@ services:
         ipv4_address: 172.16.100.201
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./backend/src/main/resources/postgres/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    #      - ./backend/src/main/resources/postgres/schema.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
