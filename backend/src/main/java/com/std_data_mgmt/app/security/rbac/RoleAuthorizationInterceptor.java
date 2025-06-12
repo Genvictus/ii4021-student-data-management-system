@@ -45,6 +45,7 @@ public class RoleAuthorizationInterceptor implements HandlerInterceptor {
 
         // Get current user's authentication
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth == null || !auth.isAuthenticated()) {
             throw new UnauthenticatedException();
         }

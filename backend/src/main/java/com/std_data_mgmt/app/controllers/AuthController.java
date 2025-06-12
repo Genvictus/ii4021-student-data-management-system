@@ -1,6 +1,7 @@
 package com.std_data_mgmt.app.controllers;
 
 import com.std_data_mgmt.app.dtos.LoginRequestDto;
+import com.std_data_mgmt.app.dtos.LoginResponseDto;
 import com.std_data_mgmt.app.dtos.RegisterRequestDto;
 import com.std_data_mgmt.app.entities.User;
 import com.std_data_mgmt.app.security.jwt.JwtKeyProvider;
@@ -12,12 +13,14 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.PrivateKey;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
 
@@ -45,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public FormattedResponseEntity<Void> login(
+    public FormattedResponseEntity<LoginResponseDto> login(
             @Valid @RequestBody LoginRequestDto request,
             HttpServletResponse httpResponse
     ) {
@@ -67,19 +70,37 @@ public class AuthController {
         String jwtToken = Jwts.builder()
                 .setSubject(String.valueOf(user.getUserId()))
                 .claim("email", user.getEmail())
+                .claim("fullName", user.getFullName())
                 .claim("role", user.getRole().name())
+                .claim("departmentId", user.getDepartmentId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtKeyProvider.getExpirationMs()))
                 .signWith(jwtSigningKey, SignatureAlgorithm.RS256)
                 .compact();
 
-        Cookie jwtCookie = new Cookie("access-token", jwtToken);
-        jwtCookie.setAttribute("SameSite", "strict");
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge((int) (jwtKeyProvider.getExpirationMs() / 1000));
+        ResponseCookie jwtCookie = ResponseCookie.from("access-token", jwtToken)
+                .httpOnly(true)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(Duration.ofMillis(jwtKeyProvider.getExpirationMs()))
+                .build();
+        
+        httpResponse.addHeader("Set-Cookie", jwtCookie.toString());
 
-        httpResponse.addCookie(jwtCookie);
+        var loginResponseDto = new LoginResponseDto(jwtToken, user.toDto(false));
+        return new FormattedResponseEntity<>(HttpStatus.OK, true, "Login Successful", loginResponseDto);
+    }
 
-        return new FormattedResponseEntity<>(HttpStatus.OK, true, "Login Successful", null);
+    @PostMapping("/logout")
+    public FormattedResponseEntity<Void> logout(
+            HttpServletResponse httpResponse
+    ) {
+        Cookie accessTokenCookie = new Cookie("access-token", null);
+        accessTokenCookie.setMaxAge(0);
+        accessTokenCookie.setPath("/");
+
+        httpResponse.addCookie(accessTokenCookie);
+
+        return new FormattedResponseEntity<>(HttpStatus.OK, true, "Logout Successful", null);
     }
 }

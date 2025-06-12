@@ -7,14 +7,23 @@ import {
 import App from "./App";
 import { Login } from "@/pages/login";
 import { Register } from "@/pages/register";
-import { Home } from "@/pages/home";
+import { Home, homeLoader } from "@/pages/home";
+import { Index } from "./pages";
+import { Courses, coursesLoader } from "./pages/courses";
+import { Inquiries, inquiriesLoader } from "./pages/inquiries";
+import { Students, studentsLoader } from "./pages/students";
+import { Transcript, transcriptLoader } from "./pages/transcript";
 
-// Root route
 const rootRoute = createRootRoute({
     component: App,
 });
 
-// Child routes
+const indexRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/",
+    component: Index,
+});
+
 const loginRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/login",
@@ -31,14 +40,50 @@ const homeRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/home",
     component: Home,
+    loader: homeLoader,
 });
 
-// Combine routes
-const routeTree = rootRoute.addChildren([loginRoute, registerRoute, homeRoute]);
+const coursesRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/courses",
+    component: Courses,
+    loader: coursesLoader,
+});
+
+const inquiriesRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/inquiries",
+    component: Inquiries,
+    loader: inquiriesLoader,
+});
+
+const studentsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/students",
+    component: Students,
+    loader: studentsLoader,
+});
+
+const transcriptRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/transcript",
+    component: Transcript,
+    loader: transcriptLoader,
+});
+
+const routeTree = rootRoute.addChildren([
+    indexRoute,
+    loginRoute,
+    registerRoute,
+    homeRoute,
+    coursesRoute,
+    inquiriesRoute,
+    studentsRoute,
+    transcriptRoute,
+]);
 
 export const router = createRouter({ routeTree });
 
-// For type safety
 declare module "@tanstack/react-router" {
     interface Register {
         router: typeof router;

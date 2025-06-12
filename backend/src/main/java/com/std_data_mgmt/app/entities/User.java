@@ -17,7 +17,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-@ToString(of = { "userId", "role", "departmentId" })
+@ToString(of = {"userId", "role", "departmentId"})
 public class User {
     @Id
     @Column(name = "user_id")
@@ -44,7 +44,7 @@ public class User {
     @Column(name = "public_key", columnDefinition = "text")
     private String publicKey;
 
-    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", insertable = false, updatable = false)
     private Department department;
@@ -67,6 +67,7 @@ public class User {
                 publicKey,
                 departmentDto,
                 departmentId,
-                supervisorId);
+                supervisorId
+        );
     }
 }

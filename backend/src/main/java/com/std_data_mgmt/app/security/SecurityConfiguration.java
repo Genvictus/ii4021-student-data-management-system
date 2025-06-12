@@ -27,13 +27,13 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Modern way to disable CSRF
-                .formLogin(AbstractHttpConfigurer::disable) // Modern way to disable form login
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/demo/**").authenticated()
-                        .anyRequest().permitAll()
+//                        .requestMatchers("/api/v1/auth/**").permitAll()
+//                        .anyRequest().authenticated()
+                                               .anyRequest().permitAll()
                 );
         return http.build();
     }
