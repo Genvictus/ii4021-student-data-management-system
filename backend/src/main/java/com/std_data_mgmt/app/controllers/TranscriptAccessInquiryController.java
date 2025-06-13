@@ -28,12 +28,8 @@ public class TranscriptAccessInquiryController {
             @RequestBody String transcriptId,
             @AuthenticationPrincipal AuthenticatedUserInfo userInfo
     ) {
-        // TODO: make a request DTO for this, don't use raw string as the request body
-        // TODO (recommended): add validation with @Valid annotation
-
         var userId = userInfo.getUserId();
         var departmentId = userInfo.getDepartmentId();
-
 
         var transcriptAccessInquiry = this.transcriptService.createTranscriptAccessInquiry(
                 transcriptId,

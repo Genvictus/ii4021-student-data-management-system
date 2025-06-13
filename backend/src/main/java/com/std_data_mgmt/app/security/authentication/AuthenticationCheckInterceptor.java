@@ -3,6 +3,7 @@ package com.std_data_mgmt.app.security.authentication;
 import com.std_data_mgmt.app.exceptions.UnauthenticatedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,13 @@ public class AuthenticationCheckInterceptor implements HandlerInterceptor {
             @NonNull Object handler
     ) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+            // No authentication check needed for OPTIONS.
+            // Spring's CORS configuration will handle setting the appropriate headers.
+            return true;
+        }
+        
         if (auth == null || auth instanceof AnonymousAuthenticationToken ||
                 auth.getAuthorities()
                         .stream()
