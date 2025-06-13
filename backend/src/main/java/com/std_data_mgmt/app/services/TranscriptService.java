@@ -1,6 +1,5 @@
 package com.std_data_mgmt.app.services;
 
-import com.std_data_mgmt.app.dtos.TranscriptDto;
 import com.std_data_mgmt.app.entities.Transcript;
 import com.std_data_mgmt.app.entities.TranscriptAccessInquiry;
 import com.std_data_mgmt.app.entities.TranscriptAccessInquiryParticipant;
@@ -40,11 +39,6 @@ public class TranscriptService {
             throw new IllegalArgumentException(format("Transcript with student ID %s exists", studentId));
         }
         return this.transcriptRepository.save(transcript);
-    }
-
-    public Optional<TranscriptDto> findByStudentId(String studentId) {
-        return this.transcriptRepository.findByStudentId(studentId)
-                .map(u -> u.toDto(false, false));
     }
 
     public void updateTranscript(Transcript transcript) {

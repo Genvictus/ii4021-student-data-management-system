@@ -21,47 +21,50 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequiresRole(value = {Role.SUPERVISOR, Role.HOD})
+    @RequiresRole(value = {Role.STUDENT, Role.SUPERVISOR, Role.HOD})
     @GetMapping("/{id}")
     public FormattedResponseEntity<UserDto> getUserById(
             @PathVariable("id") String id
     ) {
         Optional<User> foundUser = this.userService.getUserById(id);
-        if (foundUser.isEmpty()) {
-            return new FormattedResponseEntity<>(
-                    HttpStatus.NOT_FOUND,
-                    false,
-                    "User with id " + id + " not found",
-                    null
-            );
-        }
-
-        UserDto userDto = foundUser.get().toDto(false);
-        return new FormattedResponseEntity<>(
+        return foundUser.map(user -> new FormattedResponseEntity<>(
                 HttpStatus.OK,
                 true,
-                "ok",
-                userDto
-        );
+                "Successfully found user",
+                user.toDto(false)
+        )).orElseGet(() -> new FormattedResponseEntity<>(
+                HttpStatus.NOT_FOUND,
+                false,
+                "User with id " + id + " not found",
+                null
+        ));
+
     }
 
     @RequiresRole(value = {Role.SUPERVISOR, Role.HOD})
-    @GetMapping
+    @GetMapping()
     public FormattedResponseEntity<List<UserDto>> getUsers(
             @RequestParam Optional<String> departmentId,
-            @RequestParam Optional<String> supervisorId
+            @RequestParam Optional<String> supervisorId,
+            @RequestParam Optional<String> role
     ) {
 
-        List<User> users = this.userService.getUsers(departmentId, supervisorId);
-        List<UserDto> userDtos = users.stream()
+        var users = this.userService.getUsers(
+                departmentId,
+                supervisorId,
+                role.map(Role::valueOf)
+        );
+
+        var userDtos = users.stream()
                 .map(user -> user.toDto(false))
                 .toList();
 
         return new FormattedResponseEntity<>(
                 HttpStatus.OK,
                 true,
-                "Users found successfully",
+                "Successfully found users",
                 userDtos
         );
     }
+
 }

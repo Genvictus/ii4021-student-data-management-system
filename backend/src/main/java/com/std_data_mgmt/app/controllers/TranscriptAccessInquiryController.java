@@ -28,6 +28,7 @@ public class TranscriptAccessInquiryController {
             @RequestBody String transcriptId,
             @AuthenticationPrincipal AuthenticatedUserInfo userInfo
     ) {
+//       TODO: change request body with a separate DTO instead of raw string
         var userId = userInfo.getUserId();
         var departmentId = userInfo.getDepartmentId();
 

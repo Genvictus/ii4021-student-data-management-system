@@ -99,7 +99,7 @@ public class UserServiceTest extends BaseIntegrationTest {
         userRepository.saveAll(List.of(user1, user2, user3));
 
         // When
-        List<User> users = userService.getUsers(Optional.empty(), Optional.empty());
+        List<User> users = userService.getUsers(Optional.empty(), Optional.empty(), Optional.empty());
 
         // Then
         assertThat(users).hasSize(3);
@@ -154,7 +154,7 @@ public class UserServiceTest extends BaseIntegrationTest {
         userRepository.saveAll(List.of(user1, user2, user3, user4));
 
         // When
-        List<User> dept135Users = userService.getUsers(Optional.of("135"), Optional.empty());
+        List<User> dept135Users = userService.getUsers(Optional.of("135"), Optional.empty(), Optional.empty());
 
         // Then
         assertThat(dept135Users).hasSize(2);
@@ -203,7 +203,7 @@ public class UserServiceTest extends BaseIntegrationTest {
         userRepository.saveAll(List.of(user1, user2, user3));
 
         // When
-        List<User> sup1Users = userService.getUsers(Optional.empty(), Optional.of("Sup1"));
+        List<User> sup1Users = userService.getUsers(Optional.empty(), Optional.of("Sup1"), Optional.empty());
 
         // Then
         assertThat(sup1Users).hasSize(2);
@@ -252,7 +252,7 @@ public class UserServiceTest extends BaseIntegrationTest {
         userRepository.saveAll(List.of(user1, user2, user3));
 
         // When
-        List<User> filteredUsers = userService.getUsers(Optional.of("135"), Optional.of("Sup1"));
+        List<User> filteredUsers = userService.getUsers(Optional.of("135"), Optional.of("Sup1"), Optional.empty());
 
         // Then
         assertThat(filteredUsers).hasSize(1);
@@ -281,7 +281,8 @@ public class UserServiceTest extends BaseIntegrationTest {
         // When
         List<User> noMatchUsers = userService.getUsers(
                 Optional.of("182"),
-                Optional.of("NonExistentSup")
+                Optional.of("NonExistentSup"),
+                Optional.empty()
         );
 
         // Then
