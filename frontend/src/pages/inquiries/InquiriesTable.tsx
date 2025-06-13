@@ -18,12 +18,20 @@ export function InquiriesTable(props: InquiriesTableProps) {
     return (
         <Table>
             <TableHeader>
-                <TableRow>
+                <TableRow className="bg-slate-800 text-slate-100">
                     <TableHead className="w-[100px]">Code</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Credits</TableHead>
-                    <TableHead>Department ID</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Name
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Credits
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Department ID
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Actions
+                    </TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
