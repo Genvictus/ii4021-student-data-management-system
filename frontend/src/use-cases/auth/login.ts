@@ -1,5 +1,5 @@
 import api from "@/axios";
-import type { ResponseFormat } from "./response-format";
+import type { ResponseFormat } from "@/use-cases/response";
 import axios from "axios";
 
 type LoginPayload = {

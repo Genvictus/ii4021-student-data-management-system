@@ -8,7 +8,7 @@ import {
     BookOpen,
     LogOut,
 } from "lucide-react";
-import { logout } from "@/use-cases/logout";
+import { logout } from "@/use-cases/auth/logout";
 import { useNavigate } from "@tanstack/react-router";
 
 interface MenuCardProps {

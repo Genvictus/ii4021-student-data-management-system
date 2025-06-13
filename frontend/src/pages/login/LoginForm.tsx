@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { login } from "@/use-cases/login";
+import { login } from "@/use-cases/auth/login";
 import { useNavigate } from "@tanstack/react-router";
 import {
     type ChangeEventHandler,

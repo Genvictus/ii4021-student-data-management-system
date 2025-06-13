@@ -26,7 +26,7 @@ import {
 import { generateKeyPair, publicKeyToString } from "@/lib/rsa";
 import { generatePrime } from "@/lib/random";
 import { setPrivateKey } from "@/private-key-store/opfs";
-import { register } from "@/use-cases/register";
+import { register } from "@/use-cases/auth/register";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 
