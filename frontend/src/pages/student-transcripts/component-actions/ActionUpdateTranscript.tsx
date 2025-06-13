@@ -30,6 +30,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import type { TranscriptEntry } from "@/types/TranscriptWithStudent";
 
 export function ActionUpdateTranscript(props: TranscriptActionsProps) {
     const { transcript } = props;
@@ -110,118 +111,11 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
 
                                 <div>
                                     <strong>Courses:</strong>
-                                    <Table className="mt-2">
-                                        <TableHeader>
-                                            <TableRow className="text-center">
-                                                <TableHead>
-                                                    Course Code
-                                                </TableHead>
-                                                <TableHead>Credits</TableHead>
-                                                <TableHead>Score</TableHead>
-                                                <TableHead>Action</TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {data.map((entry, index) => (
-                                                <TableRow
-                                                    key={index}
-                                                    className="text-center"
-                                                >
-                                                    <TableCell>
-                                                        <Input
-                                                            value={
-                                                                entry.courseCode
-                                                            }
-                                                            onChange={(e) =>
-                                                                updateEntry(
-                                                                    index,
-                                                                    "courseCode",
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            className="text-center"
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Input
-                                                            type="number"
-                                                            min={0}
-                                                            value={
-                                                                entry.credits
-                                                            }
-                                                            onChange={(e) =>
-                                                                updateEntry(
-                                                                    index,
-                                                                    "credits",
-                                                                    +e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            className="text-center"
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Select
-                                                            value={entry.score}
-                                                            onValueChange={(
-                                                                value
-                                                            ) =>
-                                                                updateEntry(
-                                                                    index,
-                                                                    "score",
-                                                                    value
-                                                                )
-                                                            }
-                                                        >
-                                                            <SelectTrigger className="w-[100px] mx-auto">
-                                                                <SelectValue placeholder="Score" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {[
-                                                                    "A",
-                                                                    "AB",
-                                                                    "B",
-                                                                    "BC",
-                                                                    "C",
-                                                                    "D",
-                                                                    "E",
-                                                                ].map(
-                                                                    (grade) => (
-                                                                        <SelectItem
-                                                                            key={
-                                                                                grade
-                                                                            }
-                                                                            value={
-                                                                                grade
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                grade
-                                                                            }
-                                                                        </SelectItem>
-                                                                    )
-                                                                )}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Button
-                                                            variant="destructive"
-                                                            size="icon"
-                                                            onClick={() =>
-                                                                removeEntry(
-                                                                    index
-                                                                )
-                                                            }
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
+                                    <TranscriptCourseTable
+                                        data={data}
+                                        updateEntry={updateEntry}
+                                        removeEntry={removeEntry}
+                                    />
                                     <div className="flex justify-end mt-4">
                                         <Button
                                             variant="outline"
@@ -254,5 +148,98 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
                 </DialogContent>
             </Dialog>
         </div>
+    );
+}
+
+type TranscriptCourseTableProps = {
+    data: TranscriptEntry[];
+    updateEntry: (
+        index: number,
+        field: keyof TranscriptEntry,
+        value: string | number
+    ) => void;
+    removeEntry: (index: number) => void;
+};
+
+function TranscriptCourseTable(props: TranscriptCourseTableProps) {
+    const { data, updateEntry, removeEntry } = props;
+    return (
+        <Table className="mt-2">
+            <TableHeader>
+                <TableRow className="text-center">
+                    <TableHead>Course Code</TableHead>
+                    <TableHead>Credits</TableHead>
+                    <TableHead>Score</TableHead>
+                    <TableHead>Action</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {data.map((entry, index) => (
+                    <TableRow key={index} className="text-center">
+                        <TableCell>
+                            <Input
+                                value={entry.courseCode}
+                                onChange={(e) =>
+                                    updateEntry(
+                                        index,
+                                        "courseCode",
+                                        e.target.value
+                                    )
+                                }
+                                className="text-center"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <Input
+                                type="number"
+                                min={0}
+                                value={entry.credits}
+                                onChange={(e) =>
+                                    updateEntry(
+                                        index,
+                                        "credits",
+                                        +e.target.value
+                                    )
+                                }
+                                className="text-center"
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <Select
+                                value={entry.score}
+                                onValueChange={(value) =>
+                                    updateEntry(index, "score", value)
+                                }
+                            >
+                                <SelectTrigger className="w-[100px] mx-auto">
+                                    <SelectValue placeholder="Score" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {["A", "AB", "B", "BC", "C", "D", "E"].map(
+                                        (grade) => (
+                                            <SelectItem
+                                                key={grade}
+                                                value={grade}
+                                            >
+                                                {grade}
+                                            </SelectItem>
+                                        )
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        </TableCell>
+                        <TableCell>
+                            <Button
+                                variant="destructive"
+                                size="icon"
+                                onClick={() => removeEntry(index)}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
     );
 }
