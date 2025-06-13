@@ -69,11 +69,7 @@ describe("rsa digital signature", () => {
         const message = "This is a test message";
         const tamperedMessage = "This is a **tampered** message";
 
-<<<<<<< HEAD
-        const digest = sha3Digest(message); //
-=======
         const digest = sha3Digest(message);
->>>>>>> 34fa487 (add sha-3 to create message digest)
         const tamperedDigest = sha3Digest(tamperedMessage);
 
         const p = await generatePrime(1024);
