@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.std_data_mgmt.app.dtos.TranscriptCreationDto;
+import com.std_data_mgmt.app.dtos.TranscriptUpdateDto;
 import com.std_data_mgmt.app.dtos.TranscriptDto;
 import com.std_data_mgmt.app.entities.Transcript;
 import com.std_data_mgmt.app.enums.Role;
@@ -30,12 +31,12 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/transcripts")
 @AllArgsConstructor
-public class TranscriptController<T> {
+public class TranscriptController {
     private final TranscriptService transcriptService;
 
     @PostMapping()
     public FormattedResponseEntity<TranscriptDto> createTranscript(
-            @Valid @RequestBody TranscriptCreationDto transcriptCreationDto,
+            @Valid @RequestBody TranscriptUpdateDto transcriptCreationDto,
             @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
         Transcript transcript = transcriptCreationDto.toTranscript();
         TranscriptDto createdTranscript = this.transcriptService
@@ -44,7 +45,6 @@ public class TranscriptController<T> {
         return new FormattedResponseEntity<TranscriptDto>(HttpStatus.OK, true, "Transcript created", createdTranscript);
     }
 
-    // TODO: implement
     @GetMapping()
     public FormattedResponseEntity<List<TranscriptDto>> getTranscripts(
             @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
@@ -52,7 +52,7 @@ public class TranscriptController<T> {
         switch (userInfo.getRole()) {
             case Role.STUDENT:
                 Transcript transcript = this.transcriptService.findTranscriptByStudentId(userInfo.getUserId()).get();
-                transcripts = List.of(transcript.toDto(false, false, null));
+                transcripts = List.of(transcript.toDto(false, false, Role.STUDENT));
                 break;
             case Role.SUPERVISOR:
                 transcripts = this.transcriptService.findTranscriptBySupervisor(userInfo.getUserId())
@@ -61,20 +61,20 @@ public class TranscriptController<T> {
                         .toList();
                 break;
             case Role.HOD:
-                transcripts = List.of();
+                transcripts = this.transcriptService.findTranscriptByHod(userInfo.getUserId())
+                        .stream()
+                        .map(t -> t.toDto(false, false, Role.HOD))
+                        .toList();
                 break;
             default:
-
-                transcripts = List.of();
-                break;
+                throw new IllegalArgumentException("Role not found for this operation");
         }
-        return new FormattedResponseEntity<>(HttpStatus.OK, false, null, transcripts);
+        return new FormattedResponseEntity<>(
+                HttpStatus.OK,
+                true,
+                String.format("Transcript retrieved for role %d", userInfo.getRole().name()),
+                transcripts);
     }
-    // Spec: get student transcripts (including the student) related to user role
-    // if user role == STUDENT => get my own transcript
-    // else if user role == SUPERVISOR => get my student's transcripts
-    // else (HOD) => get student transcripts in my department
-    // }
 
     @GetMapping("/id")
     public FormattedResponseEntity<String> getStudentTranscriptId(
@@ -120,11 +120,25 @@ public class TranscriptController<T> {
                         null));
     }
 
-    // @PutMapping("/{id}")
-    // public FormattedResponseEntity<TranscriptDto> updateTranscript() {
-    // spec: Update in a PUT fashion, don't forget to validate based on updaterId
-    // like above
-    // }
+    @PutMapping("/{id}")
+    public FormattedResponseEntity<Object> updateTranscript(
+            @PathVariable("id") String id,
+            @Valid @RequestBody TranscriptUpdateDto transcript,
+            @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
+        switch (userInfo.getRole()) {
+            case Role.HOD:
+                this.transcriptService.signTranscript(id, transcript.getHodDigitalSignature());
+                break;
+            case Role.SUPERVISOR:
+                this.transcriptService.updateTranscript(transcript.toTranscript());
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        // spec: Update in a PUT fashion, don't forget to validate based on updaterId
+        // like above
+        return new FormattedResponseEntity<>(HttpStatus.OK, true, "ok", null);
+    }
 
     @RequiresRole(value = { Role.HOD })
     @PatchMapping("/{id}/signature")

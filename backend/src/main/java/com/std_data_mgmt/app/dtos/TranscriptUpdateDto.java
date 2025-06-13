@@ -11,11 +11,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TranscriptCreationDto {
+public class TranscriptUpdateDto {
     @NotBlank
     private String studentId;
     @NotBlank
     private List<TranscriptEntry> encryptedTranscriptData;
+
+    @NotBlank
+    private String hodDigitalSignature;
 
     @NotBlank
     private String encryptedKeyStudent;

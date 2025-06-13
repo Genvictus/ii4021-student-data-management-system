@@ -54,6 +54,9 @@ public class TranscriptService {
         transcript.setTranscriptStatus(TranscriptStatus.PENDING);
         transcript.setHodId(hod.getUserId());
         transcript.setHodDigitalSignature(null);
+
+        // TODO: validate supervisorId is the same with student's supervisorId
+
         return this.transcriptRepository.save(transcript);
     }
 
@@ -63,6 +66,10 @@ public class TranscriptService {
 
     public List<Transcript> findTranscriptBySupervisor(String supervisorId) {
         return this.transcriptRepository.findBySupervisorId(supervisorId);
+    }
+
+    public List<Transcript> findTranscriptByHod(String hodId) {
+        return this.transcriptRepository.findByHodId(hodId);
     }
 
     public void updateTranscript(Transcript transcript) {
