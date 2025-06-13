@@ -17,11 +17,17 @@ export function CoursesTable(props: CorusesTableProps) {
     return (
         <Table>
             <TableHeader>
-                <TableRow>
+                <TableRow className="bg-slate-800 text-slate-100">
                     <TableHead className="w-[100px]">Code</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Credits</TableHead>
-                    <TableHead>Department ID</TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Name
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Credits
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Department ID
+                    </TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

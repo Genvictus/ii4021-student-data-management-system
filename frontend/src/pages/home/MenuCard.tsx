@@ -1,13 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { UserRole } from "@/types/UserProfile";
-import {
-    Users,
-    MessagesSquare,
-    ScrollText,
-    BookOpen,
-    LogOut,
-} from "lucide-react";
+import { MessagesSquare, ScrollText, BookOpen, LogOut } from "lucide-react";
 import { logout } from "@/use-cases/auth/logout";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -46,7 +40,7 @@ function StudentMenu() {
 function SupervisorMenu() {
     return (
         <CardContent className="flex flex-col gap-4 justify-center items-center">
-            <ViewStudentsMenuitem />
+            <ViewStudentTranscriptMenuitem />
             <ViewInquiriesMenuItem />
             <ViewCoursesMenuItem />
             <LogoutMenuItem />
@@ -57,7 +51,7 @@ function SupervisorMenu() {
 function HodMenu() {
     return (
         <CardContent className="flex flex-col gap-4 justify-center items-center">
-            <ViewStudentsMenuitem />
+            <ViewStudentTranscriptMenuitem />
             <ViewCoursesMenuItem />
             <LogoutMenuItem />
         </CardContent>
@@ -121,15 +115,15 @@ function LogoutMenuItem() {
     );
 }
 
-function ViewStudentsMenuitem() {
+function ViewStudentTranscriptMenuitem() {
     const navigate = useNavigate();
     const handleClick = () => {
-        navigate({ to: "/students" });
+        navigate({ to: "/student-transcripts" });
     };
     return (
         <Button className="w-full gap-2" size="lg" onClick={handleClick}>
-            <Users className="w-5 h-5" />
-            <span className="text-xl">View Students</span>
+            <ScrollText className="w-5 h-5" />
+            <span className="text-xl">View Transcripts</span>
         </Button>
     );
 }

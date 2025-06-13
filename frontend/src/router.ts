@@ -11,8 +11,11 @@ import { Home, homeLoader } from "@/pages/home";
 import { Index } from "./pages";
 import { Courses, coursesLoader } from "./pages/courses";
 import { Inquiries, inquiriesLoader } from "./pages/inquiries";
-import { Students, studentsLoader } from "./pages/students";
-import { Transcript, transcriptLoader } from "./pages/transcript";
+import {
+    StudentTranscript,
+    studentTranscriptLoader,
+} from "./pages/student-transcripts";
+import { MyTranscript, myTranscriptLoader } from "./pages/my-transcript";
 
 const rootRoute = createRootRoute({
     component: App,
@@ -57,18 +60,18 @@ const inquiriesRoute = createRoute({
     loader: inquiriesLoader,
 });
 
-const studentsRoute = createRoute({
+const studentTranscript = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/students",
-    component: Students,
-    loader: studentsLoader,
+    path: "/student-transcripts",
+    component: StudentTranscript,
+    loader: studentTranscriptLoader,
 });
 
-const transcriptRoute = createRoute({
+const myTranscriptRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/transcript",
-    component: Transcript,
-    loader: transcriptLoader,
+    component: MyTranscript,
+    loader: myTranscriptLoader,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -78,8 +81,8 @@ const routeTree = rootRoute.addChildren([
     homeRoute,
     coursesRoute,
     inquiriesRoute,
-    studentsRoute,
-    transcriptRoute,
+    studentTranscript,
+    myTranscriptRoute,
 ]);
 
 export const router = createRouter({ routeTree });
