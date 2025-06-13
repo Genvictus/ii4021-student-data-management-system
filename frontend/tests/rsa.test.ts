@@ -16,8 +16,8 @@ describe("rsa encryption", () => {
         const plaintextBytes = Buffer.from(plaintext, "utf8");
         const plaintextBN = new BN(plaintextBytes);
 
-        const p = await generatePrime(2048);
-        const q = await generatePrime(2048);
+        const p = await generatePrime(1024);
+        const q = await generatePrime(1024);
         const keyPair = generateKeyPair(p, q);
 
         const { publicKey, privateKey } = keyPair;
@@ -34,8 +34,8 @@ describe("rsa encryption", () => {
         const ciphertextBytes = Buffer.from(ciphertext, "utf8");
         const ciphertextBN = new BN(ciphertextBytes);
 
-        const p = await generatePrime(2048);
-        const q = await generatePrime(2048);
+        const p = await generatePrime(1024);
+        const q = await generatePrime(1024);
         const keyPair = generateKeyPair(p, q);
 
         const { publicKey, privateKey } = keyPair;
@@ -53,8 +53,8 @@ describe("rsa digital signature", () => {
         const messageBytes = Buffer.from(message, "utf8");
         const messageBN = new BN(messageBytes);
 
-        const p = await generatePrime(2048);
-        const q = await generatePrime(2048);
+        const p = await generatePrime(1024);
+        const q = await generatePrime(1024);
         const keyPair = generateKeyPair(p, q);
 
         const { publicKey, privateKey } = keyPair;
@@ -74,8 +74,8 @@ describe("rsa digital signature", () => {
         const messageBN = new BN(messageBytes);
         const tamperedMessageBN = new BN(tamperedMessageBytes);
 
-        const p = await generatePrime(2048);
-        const q = await generatePrime(2048);
+        const p = await generatePrime(1024);
+        const q = await generatePrime(1024);
         const keyPair = generateKeyPair(p, q);
 
         const { publicKey, privateKey } = keyPair;
