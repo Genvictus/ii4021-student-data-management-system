@@ -3,11 +3,15 @@ package com.std_data_mgmt.app.services;
 import com.std_data_mgmt.app.entities.Transcript;
 import com.std_data_mgmt.app.entities.TranscriptAccessInquiry;
 import com.std_data_mgmt.app.entities.TranscriptAccessInquiryParticipant;
+import com.std_data_mgmt.app.entities.User;
+import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.enums.TranscriptAccessInquiryStatus;
 import com.std_data_mgmt.app.enums.TranscriptStatus;
 import com.std_data_mgmt.app.exceptions.ForbiddenException;
 import com.std_data_mgmt.app.repositories.TranscriptAccessInquiryRepository;
 import com.std_data_mgmt.app.repositories.TranscriptRepository;
+import com.std_data_mgmt.app.repositories.UserRepository;
+
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import static java.lang.String.format;
 public class TranscriptService {
     public static final int MINIMUM_PARTICIPANTS = 2;
 
+    private final UserRepository userRepository;
     private final TranscriptRepository transcriptRepository;
     private final TranscriptAccessInquiryRepository transcriptAccessInquiryRepository;
 
@@ -30,15 +35,34 @@ public class TranscriptService {
         return this.transcriptRepository.findById(transcriptId);
     }
 
-    public Transcript createTranscript(Transcript transcript) {
+    public Transcript createTranscript(Transcript transcript, String supervisorId, String departmentId) {
         // Check if transcript with student ID already exists
         String studentId = transcript.getStudentId();
-        Transcript probe = new Transcript();
-        probe.setStudentId(studentId);
-        if (this.transcriptRepository.count(Example.of(probe)) != 0) {
+        Transcript transcriptProbe = Transcript.builder()
+                .studentId(studentId)
+                .build();
+        if (this.transcriptRepository.count(Example.of(transcriptProbe)) != 0) {
             throw new IllegalArgumentException(format("Transcript with student ID %s exists", studentId));
         }
+
+        User hodProbe = User.builder()
+                .departmentId(departmentId)
+                .role(Role.HOD)
+                .build();
+        User hod = this.userRepository.findOne(Example.of(hodProbe)).get();
+
+        transcript.setTranscriptStatus(TranscriptStatus.PENDING);
+        transcript.setHodId(hod.getUserId());
+        transcript.setHodDigitalSignature(null);
         return this.transcriptRepository.save(transcript);
+    }
+
+    public Optional<Transcript> findTranscriptByStudentId(String studentId) {
+        return this.transcriptRepository.findByStudentId(studentId);
+    }
+
+    public List<Transcript> findTranscriptBySupervisor(String supervisorId) {
+        return this.transcriptRepository.findBySupervisorId(supervisorId);
     }
 
     public void updateTranscript(Transcript transcript) {
@@ -63,8 +87,7 @@ public class TranscriptService {
     public void signTranscript(String transcriptId, String signature) {
         var transcript = this.transcriptRepository.findById(transcriptId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        format("Transcript with id %s does not exist", transcriptId))
-                );
+                        format("Transcript with id %s does not exist", transcriptId)));
 
         if (transcript.getTranscriptStatus().equals(TranscriptStatus.APPROVED)) {
             throw new IllegalArgumentException("Can not approve transcript that has been approved");
@@ -83,12 +106,10 @@ public class TranscriptService {
     public TranscriptAccessInquiry createTranscriptAccessInquiry(
             String transcriptId,
             String requesterId,
-            String requesterDepartment
-    ) {
+            String requesterDepartment) {
         var transcript = this.transcriptRepository.findWithStudent(transcriptId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        format("Transcript with id %s does not exist", transcriptId))
-                );
+                        format("Transcript with id %s does not exist", transcriptId)));
 
         var requesteeId = transcript.getStudent().getSupervisorId();
         var studentDepartment = transcript.getStudent().getDepartmentId();
@@ -97,8 +118,7 @@ public class TranscriptService {
             throw new IllegalArgumentException(
                     format(
                             "Transcript access request must be to students of the same department %s %s",
-                            requesterDepartment, studentDepartment
-                    ));
+                            requesterDepartment, studentDepartment));
         }
 
         var newParticipant = new TranscriptAccessInquiryParticipant(requesterId);
@@ -107,8 +127,7 @@ public class TranscriptService {
                 requesteeId,
                 TranscriptAccessInquiryStatus.WAITING_FOR_PARTICIPANTS,
                 List.of(newParticipant),
-                transcriptId
-        );
+                transcriptId);
         return this.transcriptAccessInquiryRepository.save(accessInquiry);
     }
 
@@ -120,8 +139,7 @@ public class TranscriptService {
         // Check inquiry status if new participants are able to join
         var transcriptAccessInquiry = this.transcriptAccessInquiryRepository.findWithRequestee(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        format("Transcript Access Inquiry with id %s does not exist", inquiryId))
-                );
+                        format("Transcript Access Inquiry with id %s does not exist", inquiryId)));
 
         // Check if participant is the requestee (intended supervisor)
         if (participantId.equals(transcriptAccessInquiry.getRequesteeId())) {
@@ -157,12 +175,10 @@ public class TranscriptService {
     public void approveTranscriptAccessInquiry(
             String inquiryId,
             Map<String, String> encryptedShares,
-            String approverId
-    ) {
+            String approverId) {
         var transcriptAccessInquiry = this.transcriptAccessInquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        format("Transcript access inquiry with id %s does not exist", inquiryId))
-                );
+                        format("Transcript access inquiry with id %s does not exist", inquiryId)));
 
         if (!transcriptAccessInquiry.getRequesteeId().equals(approverId)) {
             throw new ForbiddenException("Only the corresponding requestee may approve the transcript access inquiry");
@@ -182,8 +198,7 @@ public class TranscriptService {
     public void rejectTranscriptAccessInquiry(String inquiryId, String rejecterId) {
         var transcriptAccessInquiry = this.transcriptAccessInquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        format("Transcript Access Inquiry with id %s does not exist", inquiryId))
-                );
+                        format("Transcript Access Inquiry with id %s does not exist", inquiryId)));
 
         if (!transcriptAccessInquiry.getRequesteeId().equals(rejecterId)) {
             throw new ForbiddenException("Only the corresponding requestee may reject the transcript access inquiry");

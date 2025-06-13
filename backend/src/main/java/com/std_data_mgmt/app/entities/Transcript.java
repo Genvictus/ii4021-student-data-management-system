@@ -14,7 +14,6 @@ import org.hibernate.type.SqlTypes;
 import java.util.List;
 import java.util.Optional;
 
-
 @Entity
 @Table(name = "transcript")
 @Getter
@@ -29,7 +28,7 @@ public class Transcript {
     @Column(name = "transcript_id")
     private String transcriptId;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User student;
@@ -48,7 +47,7 @@ public class Transcript {
     @Column(name = "encrypted_transcript_data", columnDefinition = "jsonb")
     private List<TranscriptEntry> encryptedTranscriptData;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hod_id", referencedColumnName = "user_id")
     private User headOfDepartment;
@@ -72,7 +71,7 @@ public class Transcript {
     @Column(name = "encrypted_key_hod")
     private String encryptedKeyHod;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @OneToMany(mappedBy = "transcript", fetch = FetchType.LAZY)
     private List<TranscriptAccessInquiry> transcriptAccessInquiries;
 
@@ -97,7 +96,6 @@ public class Transcript {
                 hodId,
                 hodDto,
                 hodDigitalSignature,
-                encryptedKey
-        );
+                encryptedKey);
     }
 }

@@ -63,11 +63,6 @@ public class TranscriptAccessInquiry {
     @Column(name = "requestee_id")
     private String requesteeId;
 
-    // TODO: decide if we need this
-    // @NonNull
-    // @Column(name = "student_id")
-    // private String studentId;
-
     @NonNull
     @Column(name = "status")
     private TranscriptAccessInquiryStatus inquiryStatus;
