@@ -1,4 +1,5 @@
 import BN from "bn.js";
+import { sha3_256 } from "js-sha3";
 
 export type RsaPublicKey = {
     e: BN;
@@ -84,6 +85,11 @@ export function decrypt(ciphertext: BN, key: RsaPrivateKey): BN {
     const reduced = BN.red(n);
     const decrypted = ciphertext.toRed(reduced).redPow(d).fromRed();
     return decrypted;
+}
+
+export function sha3Digest(message: string): BN {
+    const hashHex = sha3_256(message);
+    return new BN(hashHex, 16);
 }
 
 export function sign(messageDigest: BN, key: RsaPrivateKey): BN {

@@ -6,6 +6,7 @@ import {
     generateKeyPair,
     sign,
     verify,
+    sha3Digest,
 } from "../src/lib/rsa";
 import { generatePrime } from "../src/lib/random";
 import { describe } from "node:test";
@@ -23,10 +24,10 @@ describe("rsa encryption", () => {
         const { publicKey, privateKey } = keyPair;
 
         const ciphertextBN = encrypt(plaintextBN, publicKey);
-        expect(ciphertextBN.eq(plaintextBN)).toBe(false); // Should not match original
+        expect(ciphertextBN.eq(plaintextBN)).toBe(false);
 
         const decryptedCiphertextBN = decrypt(ciphertextBN, privateKey);
-        expect(plaintextBN.eq(decryptedCiphertextBN)).toBe(true); // Should match original
+        expect(plaintextBN.eq(decryptedCiphertextBN)).toBe(true);
     });
 
     test("encrypt(decrypt(ciphertext)) is equal to ciphertext", async () => {
@@ -50,8 +51,7 @@ describe("rsa encryption", () => {
 describe("rsa digital signature", () => {
     test("rsa verifies authentic message", async () => {
         const message = "This is a test message";
-        const messageBytes = Buffer.from(message, "utf8");
-        const messageBN = new BN(messageBytes);
+        const digest = sha3Digest(message);
 
         const p = await generatePrime(1024);
         const q = await generatePrime(1024);
@@ -59,8 +59,8 @@ describe("rsa digital signature", () => {
 
         const { publicKey, privateKey } = keyPair;
 
-        const signature = sign(messageBN, privateKey);
-        const isVerified = verify(messageBN, publicKey, signature);
+        const signature = sign(digest, privateKey);
+        const isVerified = verify(digest, publicKey, signature);
 
         expect(isVerified).toBe(true);
     });
@@ -68,11 +68,9 @@ describe("rsa digital signature", () => {
     test("rsa fails to verify tampered message", async () => {
         const message = "This is a test message";
         const tamperedMessage = "This is a **tampered** message";
-        const messageBytes = Buffer.from(message, "utf8");
-        const tamperedMessageBytes = Buffer.from(tamperedMessage, "utf8");
 
-        const messageBN = new BN(messageBytes);
-        const tamperedMessageBN = new BN(tamperedMessageBytes);
+        const digest = sha3Digest(message); //
+        const tamperedDigest = sha3Digest(tamperedMessage);
 
         const p = await generatePrime(1024);
         const q = await generatePrime(1024);
@@ -80,8 +78,8 @@ describe("rsa digital signature", () => {
 
         const { publicKey, privateKey } = keyPair;
 
-        const signature = sign(messageBN, privateKey);
-        const isVerified = verify(tamperedMessageBN, publicKey, signature);
+        const signature = sign(digest, privateKey);
+        const isVerified = verify(tamperedDigest, publicKey, signature);
 
         expect(isVerified).toBe(false);
     });
