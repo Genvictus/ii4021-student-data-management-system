@@ -83,6 +83,12 @@ public class TranscriptAccessInquiry {
     private String transcriptId;
 
     public TranscriptAccessInquiryDto toDto() {
-        return new TranscriptAccessInquiryDto();
+        return new TranscriptAccessInquiryDto(
+                inquiryId,
+                requesterId,
+                requesteeId,
+                inquiryStatus,
+                participants,
+                transcriptId);
     }
 }

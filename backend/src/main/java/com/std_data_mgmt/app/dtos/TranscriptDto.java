@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -19,7 +18,7 @@ public class TranscriptDto {
     private Optional<UserDto> student;
     private String studentId;
     private TranscriptStatus transcriptStatus;
-    private List<TranscriptEntry> encryptedTranscriptData;
+    private String encryptedTranscriptData;
     private String hodId;
     private Optional<UserDto> hod;
     private String hodDigitalSignature;

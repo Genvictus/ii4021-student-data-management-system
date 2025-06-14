@@ -1,6 +1,7 @@
 package com.std_data_mgmt.app.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,6 @@ public class TranscriptAccessInquiryParticipant {
     @NonNull
     private String id;
     private String encryptedShare;
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String publicKey;
 }

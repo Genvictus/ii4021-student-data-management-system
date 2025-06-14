@@ -1,18 +1,32 @@
 package com.std_data_mgmt.app.entities;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.std_data_mgmt.app.dtos.TranscriptDto;
 import com.std_data_mgmt.app.dtos.UserDto;
 import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.enums.TranscriptStatus;
-import com.std_data_mgmt.app.utils.TranscriptDataConverter;
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "transcript")
@@ -42,10 +56,8 @@ public class Transcript {
     private TranscriptStatus transcriptStatus;
 
     @NonNull
-    @Convert(converter = TranscriptDataConverter.class)
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "encrypted_transcript_data", columnDefinition = "jsonb")
-    private List<TranscriptEntry> encryptedTranscriptData;
+    @Column(name = "encrypted_transcript_data", columnDefinition = "text")
+    private String encryptedTranscriptData;
 
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.LAZY)

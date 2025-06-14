@@ -34,17 +34,6 @@ import lombok.AllArgsConstructor;
 public class TranscriptController {
     private final TranscriptService transcriptService;
 
-    @PostMapping()
-    public FormattedResponseEntity<TranscriptDto> createTranscript(
-            @Valid @RequestBody TranscriptUpdateDto transcriptCreationDto,
-            @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
-        Transcript transcript = transcriptCreationDto.toTranscript();
-        TranscriptDto createdTranscript = this.transcriptService
-                .createTranscript(transcript, userInfo.getUserId(), userInfo.getDepartmentId())
-                .toDto(false, false, userInfo.getRole());
-        return new FormattedResponseEntity<TranscriptDto>(HttpStatus.OK, true, "Transcript created", createdTranscript);
-    }
-
     @GetMapping()
     public FormattedResponseEntity<List<TranscriptDto>> getTranscripts(
             @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
@@ -76,9 +65,9 @@ public class TranscriptController {
                 transcripts);
     }
 
-    @GetMapping("/id")
+    @GetMapping("/student/{id}")
     public FormattedResponseEntity<String> getStudentTranscriptId(
-            @RequestParam("studentId") String studentId) {
+            @PathVariable("id") String studentId) {
         Optional<String> foundTranscriptId = this.transcriptService.getStudentTranscriptId(studentId);
         return foundTranscriptId.map(id -> new FormattedResponseEntity<>(
                 HttpStatus.OK,
@@ -118,6 +107,17 @@ public class TranscriptController {
                         false,
                         "Transcript with ID " + id + " not found",
                         null));
+    }
+
+    @PostMapping()
+    public FormattedResponseEntity<TranscriptDto> createTranscript(
+            @Valid @RequestBody TranscriptUpdateDto transcriptCreationDto,
+            @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
+        Transcript transcript = transcriptCreationDto.toTranscript();
+        TranscriptDto createdTranscript = this.transcriptService
+                .createTranscript(transcript, userInfo.getUserId(), userInfo.getDepartmentId())
+                .toDto(false, false, userInfo.getRole());
+        return new FormattedResponseEntity<TranscriptDto>(HttpStatus.OK, true, "Transcript created", createdTranscript);
     }
 
     @PutMapping("/{id}")

@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/transcripts/access-inquiries")
@@ -44,8 +45,19 @@ public class TranscriptAccessInquiryController {
     @GetMapping()
     public FormattedResponseEntity<List<TranscriptAccessInquiryDto>> getTranscriptAccessInquiries() {
         var inquiries = this.transcriptService.getTranscriptAccessInquiries();
-        var inquiriesDto = inquiries.stream().map(TranscriptAccessInquiry::toDto).toList();
+        var inquiriesDto = inquiries.stream()
+                .map(TranscriptAccessInquiry::toDto)
+                .toList();
         return new FormattedResponseEntity<>(HttpStatus.OK, true, "ok", inquiriesDto);
+    }
+
+    @RequiresRole(value = { Role.SUPERVISOR })
+    @GetMapping("/{inquiryId}")
+    public FormattedResponseEntity<Optional<TranscriptAccessInquiryDto>> getTranscriptAccessInquiryById(
+            @PathVariable("inquiryId") String inquiryId) {
+        var inquiry = this.transcriptService.getTranscriptAccessInquiryById(inquiryId, true)
+                .map(TranscriptAccessInquiry::toDto);
+        return new FormattedResponseEntity<>(HttpStatus.OK, true, "ok", inquiry);
     }
 
     @RequiresRole(value = { Role.SUPERVISOR })

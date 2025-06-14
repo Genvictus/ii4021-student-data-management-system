@@ -15,7 +15,7 @@ public class TranscriptUpdateDto {
     @NotBlank
     private String studentId;
     @NotBlank
-    private List<TranscriptEntry> encryptedTranscriptData;
+    private String encryptedTranscriptData;
 
     @NotBlank
     private String hodDigitalSignature;

@@ -38,17 +38,15 @@ public class TranscriptService {
     public Transcript createTranscript(Transcript transcript, String supervisorId, String departmentId) {
         // Check if transcript with student ID already exists
         String studentId = transcript.getStudentId();
-        Transcript transcriptProbe = Transcript.builder()
-                .studentId(studentId)
-                .build();
+        Transcript transcriptProbe = new Transcript();
+        transcriptProbe.setStudentId(studentId);
         if (this.transcriptRepository.count(Example.of(transcriptProbe)) != 0) {
             throw new IllegalArgumentException(format("Transcript with student ID %s exists", studentId));
         }
 
-        User hodProbe = User.builder()
-                .departmentId(departmentId)
-                .role(Role.HOD)
-                .build();
+        User hodProbe = new User();
+        hodProbe.setDepartmentId(departmentId);
+        hodProbe.setRole(Role.HOD);
         User hod = this.userRepository.findOne(Example.of(hodProbe)).get();
 
         transcript.setTranscriptStatus(TranscriptStatus.PENDING);
@@ -140,6 +138,27 @@ public class TranscriptService {
 
     public List<TranscriptAccessInquiry> getTranscriptAccessInquiries() {
         return this.transcriptAccessInquiryRepository.findAll();
+    }
+
+    public Optional<TranscriptAccessInquiry> getTranscriptAccessInquiryById(String inquiryId, boolean populateKey) {
+        Optional<TranscriptAccessInquiry> inquiry = this.transcriptAccessInquiryRepository.findById(inquiryId);
+        return inquiry.map(i -> {
+            List<TranscriptAccessInquiryParticipant> participants = i.getParticipants();
+            List<String> userIds = participants.stream().map(TranscriptAccessInquiryParticipant::getId).toList();
+            // Populate the public keys of the users
+            if (populateKey) {
+                List<User> users = this.userRepository.findAllById(userIds);
+                users.forEach(u -> {
+                    for (TranscriptAccessInquiryParticipant participant : participants) {
+                        if (participant.getId().equals(u.getUserId())) {
+                            participant.setPublicKey(u.getPublicKey());
+                            break;
+                        }
+                    }
+                });
+            }
+            return i;
+        });
     }
 
     public void joinTranscriptAccessInquiry(String inquiryId, String participantId, String participantDepartmentId) {
