@@ -33,7 +33,7 @@ export function aesKeyToString(aesKey: AESKey): string {
 
 export function aesKeyFromString(keyString: string): AESKey {
     const { key, iv } = JSON.parse(keyString);
-    const ivBytes = new Uint8Array(new BN(iv).toArray())
+    const ivBytes = new Uint8Array(new BN(iv, 16).toArray())
     return {
         key: key,
         iv: ivBytes

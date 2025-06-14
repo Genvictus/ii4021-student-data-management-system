@@ -5,28 +5,23 @@ import { getPrivateKey } from "@/private-key-store/opfs";
 import type { TranscriptUpdatePayload } from "@/types/TranscriptPayload";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import type { ResponseFormat } from "@/use-cases/response";
-import { toUpdatePayload } from "./util";
+import { toPayload } from "./util";
 
 async function encryptDataAndKeys(
     transcript: TranscriptWithStudent
 ): Promise<TranscriptUpdatePayload> {
     const selfKey = await getPrivateKey(getUserProfile()!.email);
 
-    const payload = toUpdatePayload(transcript, selfKey!);
+    const payload = toPayload(transcript, selfKey!);
 
     return payload;
 }
 
-export async function UpdateStudentTranscript(
-    transcript: TranscriptWithStudent
-): Promise<ResponseFormat<string[] | null>> {
+export async function updateStudentTranscript(transcript: TranscriptWithStudent): Promise<ResponseFormat<string[] | null>> {
     try {
         const processedPayload = encryptDataAndKeys(transcript);
 
-        const response = await api.post(
-            "/api/v1/transcripts",
-            processedPayload
-        );
+        const response = await api.put(`/api/v1/transcripts/${transcript.transcriptId}`, processedPayload);
 
         console.log(response.data.data);
 

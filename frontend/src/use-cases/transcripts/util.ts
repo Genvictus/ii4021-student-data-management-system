@@ -29,7 +29,10 @@ export function decryptTranscriptEntries(entries: string, key: AESKey): Transcri
     return JSON.parse(decryptedString);
 }
 
-export function toUpdatePayload(transcript: TranscriptWithStudent, selfPK?: RsaPrivateKey): TranscriptUpdatePayload {
+export function toPayload(transcript: Pick<
+    TranscriptWithStudent,
+    "studentId" | "transcriptData" | "encryptedKey"
+>, selfPK?: RsaPrivateKey): TranscriptUpdatePayload {
     let transcriptData = "";
     if (selfPK) {
         const keyString = BNToString(decryptKeys(transcript.encryptedKey, selfPK))
@@ -41,6 +44,6 @@ export function toUpdatePayload(transcript: TranscriptWithStudent, selfPK?: RsaP
         encryptedTranscriptData: transcriptData,
         encryptedKeyStudent: "",
         encryptedKeySupervisor: "",
-        encryptedKeyHod: ""
+        encryptedKeyHod: "",
     }
 }

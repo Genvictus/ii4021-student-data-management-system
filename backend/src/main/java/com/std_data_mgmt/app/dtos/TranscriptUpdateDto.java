@@ -12,28 +12,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TranscriptUpdateDto {
-    @NotBlank
     private String studentId;
-    @NotBlank
     private String encryptedTranscriptData;
 
-    @NotBlank
     private String hodDigitalSignature;
 
-    @NotBlank
     private String encryptedKeyStudent;
-    @NotBlank
     private String encryptedKeySupervisor;
-    @NotBlank
     private String encryptedKeyHod;
 
     public Transcript toTranscript() {
-        return Transcript.builder()
-                .studentId(studentId)
-                .encryptedTranscriptData(encryptedTranscriptData)
-                .encryptedKeyStudent(encryptedKeyStudent)
-                .encryptedKeySupervisor(encryptedKeySupervisor)
-                .encryptedKeyHod(encryptedKeyHod)
-                .build();
+        Transcript transcript = new Transcript();
+        transcript.setStudentId(studentId);
+        transcript.setEncryptedTranscriptData(encryptedTranscriptData);
+        transcript.setEncryptedKeyStudent(encryptedKeyStudent);
+        transcript.setEncryptedKeySupervisor(encryptedKeySupervisor);
+        transcript.setEncryptedKeyHod(encryptedKeyHod);
+        return transcript;
     }
 }

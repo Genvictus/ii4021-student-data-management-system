@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { TranscriptCourseEditTable } from "./TranscriptCourseEditTable";
 import { TranscriptViewCard } from "./TranscriptView";
-import { UpdateStudentTranscript } from "@/use-cases/transcripts/updateStudentTranscript";
+import { updateStudentTranscript } from "@/use-cases/transcripts/updateStudentTranscript";
 import { toast } from "sonner";
 
 export function ActionUpdateTranscript(props: TranscriptActionsProps) {
@@ -57,7 +57,7 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
     };
 
     const handleConfirm = async () => {
-        const response = await UpdateStudentTranscript(transcript);
+        const response = await updateStudentTranscript(transcript);
 
         if (response.success) {
             toast.success("Successfully updated transcript");

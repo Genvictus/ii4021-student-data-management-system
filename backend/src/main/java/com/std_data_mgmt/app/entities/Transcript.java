@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -51,12 +52,12 @@ public class Transcript {
     @Column(name = "student_id")
     private String studentId;
 
-    @NonNull
     @Column(name = "status")
     private TranscriptStatus transcriptStatus;
 
     @NonNull
-    @Column(name = "encrypted_transcript_data", columnDefinition = "text")
+    @Lob
+    @Column(name = "encrypted_transcript_data")
     private String encryptedTranscriptData;
 
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -68,18 +69,22 @@ public class Transcript {
     @Column(name = "hod_id", insertable = false, updatable = false)
     private String hodId;
 
+    @Lob
     @Column(name = "hod_digital_signature")
     private String hodDigitalSignature;
 
     @NonNull
+    @Lob
     @Column(name = "encrypted_key_student")
     private String encryptedKeyStudent;
 
     @NonNull
+    @Lob
     @Column(name = "encrypted_key_supervisor")
     private String encryptedKeySupervisor;
 
     @NonNull
+    @Lob
     @Column(name = "encrypted_key_hod")
     private String encryptedKeyHod;
 

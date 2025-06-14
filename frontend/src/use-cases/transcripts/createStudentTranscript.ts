@@ -6,23 +6,31 @@ import { stringToPublicKey, type RsaPublicKey } from "@/lib/rsa";
 import type { TranscriptUpdatePayload } from "@/types/TranscriptPayload";
 import type { ResponseFormat } from "@/use-cases/response";
 import axios from "axios";
-import { encryptKeys, encryptTranscriptEntries, toUpdatePayload } from "./util";
+import { encryptKeys, encryptTranscriptEntries, toPayload } from "./util";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
+import type { UserProfile } from "@/types/UserProfile";
+
+type TranscriptCreationPayload = Pick<
+    TranscriptWithStudent,
+    "studentId" | "transcriptData"
+>
+
+type UserResponse = Omit<UserProfile, "publicKey"> & { publicKey: string }
 
 async function getHodPublicKey(departmentId: string): Promise<RsaPublicKey> {
-    const response = await api.get("api/v1/users", {
+    const response = await api.get<ResponseFormat<UserResponse[]>>("api/v1/users", {
         params: { departmentId: departmentId, role: "HOD" },
     });
-    return stringToPublicKey(response.data.publicKey);
+    return stringToPublicKey(response.data.data![0].publicKey);
 }
 
 async function getStudentPublicKey(studentId: string): Promise<RsaPublicKey> {
-    const response = await api.get(`api/v1/users/${studentId}`);
-    return stringToPublicKey(response.data.publicKey);
+    const response = await api.get<ResponseFormat<UserResponse>>(`api/v1/users/${studentId}`);
+    return stringToPublicKey(response.data.data!.publicKey);
 }
 
 async function encryptDataAndKeys(
-    transcript: TranscriptWithStudent,
+    transcript: TranscriptCreationPayload,
     encryptionKey: string
 ): Promise<TranscriptUpdatePayload> {
     const hodPK = await getHodPublicKey(getUserProfile()!.departmentId);
@@ -32,7 +40,7 @@ async function encryptDataAndKeys(
     const aesKey = generateAesKey(encryptionKey);
     const aesKeyBN = stringToBN(aesKeyToString(aesKey));
 
-    const payload = toUpdatePayload(transcript);
+    const payload = toPayload({ ...transcript, encryptedKey: "" });
 
     payload.encryptedTranscriptData = encryptTranscriptEntries(
         transcript.transcriptData!,
@@ -52,13 +60,14 @@ async function encryptDataAndKeys(
 // 2. Kenapa ini returnnya <ResponseFormat<string[] | null> ???
 // Fix ASAP
 export async function createStudentTranscript(
-    transcript: TranscriptWithStudent,
+    transcript: TranscriptCreationPayload,
     encryptionKey: string
 ): Promise<ResponseFormat<string[] | null>> {
     try {
-        const processedPayload = encryptDataAndKeys(transcript, encryptionKey);
+        const processedPayload = await encryptDataAndKeys(transcript, encryptionKey);
 
-        const response = await api.post("api/v1/transcripts", processedPayload);
+        console.log("transcript payload:", processedPayload);
+        const response = await api.post("/api/v1/transcripts", processedPayload);
 
         console.log(response.data.data);
 

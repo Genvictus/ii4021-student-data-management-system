@@ -28,36 +28,6 @@ const initialTranscript: TranscriptInput = {
     transcriptData: [],
 };
 
-async function createStudentTranscriptMock(
-    transcript: TranscriptInput,
-    encryptionKey: string
-): Promise<ResponseFormat<EncryptedTranscriptWithStudent>> {
-    return {
-        success: true,
-        message: "OK",
-        data: {
-            transcriptId: "transcript-001",
-            student: {
-                userId: "user-123",
-                email: "student1@example.com",
-                fullName: "Alice Smith",
-                role: "STUDENT",
-                publicKey: "student1-public-key",
-                department: null,
-                departmentId: "dept-001",
-                supervisorId: "hod-001",
-            },
-            studentId: "user-123",
-            transcriptStatus: "PENDING",
-            encryptedTranscriptData: "adfafasdfasdf",
-            hodId: "hod-001",
-            hod: null,
-            hodDigitalSignature: "dummy-signature-123",
-            encryptedKey: "encrypted-key-abc",
-        },
-    };
-}
-
 export function ActionCreateTranscript() {
     const [open, setOpen] = useState(false);
     const [transcript, setTranscript] = useState(
@@ -99,7 +69,7 @@ export function ActionCreateTranscript() {
 
     const handleConfirm = async () => {
         if (!encryptionKey) return;
-        const response = await createStudentTranscriptMock(
+        const response = await createStudentTranscript(
             transcript,
             encryptionKey
         );

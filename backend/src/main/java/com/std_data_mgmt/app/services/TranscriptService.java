@@ -11,8 +11,12 @@ import com.std_data_mgmt.app.exceptions.ForbiddenException;
 import com.std_data_mgmt.app.repositories.TranscriptAccessInquiryRepository;
 import com.std_data_mgmt.app.repositories.TranscriptRepository;
 import com.std_data_mgmt.app.repositories.UserRepository;
+import com.std_data_mgmt.app.security.jwt.JwtAuthenticationFilter;
 
 import lombok.AllArgsConstructor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +29,9 @@ import static java.lang.String.format;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class TranscriptService {
+    private static final Logger logger = LoggerFactory.getLogger(TranscriptService.class);
     public static final int MINIMUM_PARTICIPANTS = 2;
 
     private final UserRepository userRepository;
@@ -50,6 +56,8 @@ public class TranscriptService {
         hodProbe.setRole(Role.HOD);
         User hod = this.userRepository.findOne(Example.of(hodProbe)).get();
 
+        // TODO: check bug hod id not updated
+        logger.info(String.format("hod Id probed %s", hod.getUserId()));
         transcript.setTranscriptStatus(TranscriptStatus.PENDING);
         transcript.setHodId(hod.getUserId());
         transcript.setHodDigitalSignature(null);
@@ -71,7 +79,6 @@ public class TranscriptService {
         return this.transcriptRepository.findByHodId(hodId);
     }
 
-    @Transactional
     public void updateTranscript(Transcript transcript) {
         // Ensure that the sign property cannot be updated, so transcript.signature must
         // be null when the transcript is updated
