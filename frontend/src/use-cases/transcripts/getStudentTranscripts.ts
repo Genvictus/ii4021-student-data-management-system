@@ -1,16 +1,58 @@
+import api from "@/axios";
+import { aesKeyFromString } from "@/lib/aes";
+import { BNToString } from "@/lib/converter";
+import { getUserProfile } from "@/lib/getUserProfile";
+import { getPrivateKey } from "@/private-key-store/opfs";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import type { ResponseFormat } from "../response";
+import { decryptKeys, decryptTranscriptEntries } from "./util";
+import axios from "axios";
+
+async function parseAndDecryptTranscripts(transcripts: EncryptedTranscript[]): Promise<TranscriptWithStudent[]> {
+    const selfKey = await getPrivateKey(getUserProfile()!.email);
+    return transcripts.map(t => {
+        const decryptKeyString = BNToString(decryptKeys(t.encryptedKey, selfKey!));
+        const decryptKey = aesKeyFromString(decryptKeyString);
+        return {
+            ...t,
+            transcriptData: decryptTranscriptEntries(t.encryptedTranscriptData, decryptKey)
+        }
+    })
+}
+
+type EncryptedTranscript = Omit<TranscriptWithStudent, "transcriptData"> & { encryptedTranscriptData: string }
 
 export type GetStudentTranscriptsResponse = ResponseFormat<
-    TranscriptWithStudent[] | null
+    TranscriptWithStudent[]
+>;
+
+type GetEncryptedStudentTranscriptsResponse = ResponseFormat<
+    EncryptedTranscript[]
 >;
 
 export async function getStudentTranscripts(): Promise<GetStudentTranscriptsResponse> {
-    return {
-        success: true,
-        message: "Successfully get student transcripts",
-        data: dummyData,
-    };
+    try {
+        const response = await api.get<GetEncryptedStudentTranscriptsResponse>("api/v1/transcripts");
+        const data = response.data.data;
+
+        return {
+            success: true,
+            message: response.data.message,
+            data: data ? await parseAndDecryptTranscripts(data) : null,
+        };
+    } catch (error) {
+        console.error(error);
+
+        if (axios.isAxiosError(error) && error.response) {
+            return error.response.data;
+        }
+
+        return {
+            success: false,
+            message: "An unexpected error occurred",
+            data: null,
+        };
+    }
 }
 
 const dummyData: TranscriptWithStudent[] = [

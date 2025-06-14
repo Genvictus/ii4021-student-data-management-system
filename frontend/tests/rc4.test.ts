@@ -6,7 +6,6 @@ import { describe } from "node:test";
 
 describe("RC4 encryption", () => {
     const encoder = new TextEncoder();
-    const decoder = new TextDecoder();
 
     test("decryption with same plaintext and key is deterministic", async () => {
         const key = "secret_key";

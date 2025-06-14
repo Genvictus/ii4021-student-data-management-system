@@ -15,6 +15,7 @@ import com.std_data_mgmt.app.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,7 @@ public class TranscriptService {
         return this.transcriptRepository.findByHodId(hodId);
     }
 
+    @Transactional
     public void updateTranscript(Transcript transcript) {
         // Ensure that the sign property cannot be updated, so transcript.signature must
         // be null when the transcript is updated
@@ -79,14 +81,15 @@ public class TranscriptService {
 
         // Check if transcript with ID already exists to update
         String transcriptId = transcript.getTranscriptId();
-        Transcript probe = new Transcript();
-        probe.setTranscriptId(transcriptId);
-        if (this.transcriptRepository.count(Example.of(probe)) == 0) {
+        Optional<Transcript> dbTranscript = this.transcriptRepository.findById(transcriptId);
+        dbTranscript.ifPresentOrElse(t -> {
+            t.setTranscriptStatus(TranscriptStatus.PENDING);
+            t.setEncryptedTranscriptData(transcript.getEncryptedTranscriptData());
+            t.setHodDigitalSignature(null);
+            this.transcriptRepository.save(t);
+        }, () -> {
             throw new IllegalArgumentException(format("Transcript with ID %s does not exist", transcriptId));
-        }
-        transcript.setHodDigitalSignature(null);
-        transcript.setTranscriptStatus(TranscriptStatus.PENDING);
-        this.transcriptRepository.save(transcript);
+        });
     }
 
     public void signTranscript(String transcriptId, String signature) {

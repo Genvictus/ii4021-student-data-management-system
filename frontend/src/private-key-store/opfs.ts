@@ -6,11 +6,11 @@ import {
     type RsaPrivateKey,
 } from "@/lib/rsa";
 
-let cachedPrivateKey: RsaPrivateKey | null = null;
+let cachedPrivateKey: RsaPrivateKey;
 
 export async function getPrivateKey(
     username: string
-): Promise<RsaPrivateKey | null> {
+): Promise<RsaPrivateKey | undefined> {
     if (cachedPrivateKey) return cachedPrivateKey;
 
     try {
@@ -23,7 +23,7 @@ export async function getPrivateKey(
         cachedPrivateKey = stringToPrivateKey(text);
         return cachedPrivateKey;
     } catch (err: any) {
-        if (err.name === "NotFoundError") return null;
+        if (err.name === "NotFoundError") return;
         throw err;
     }
 }

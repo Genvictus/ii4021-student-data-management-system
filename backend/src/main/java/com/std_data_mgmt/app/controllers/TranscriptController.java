@@ -41,18 +41,18 @@ public class TranscriptController {
         switch (userInfo.getRole()) {
             case Role.STUDENT:
                 Transcript transcript = this.transcriptService.findTranscriptByStudentId(userInfo.getUserId()).get();
-                transcripts = List.of(transcript.toDto(false, false, Role.STUDENT));
+                transcripts = List.of(transcript.toDto(true, false, Role.STUDENT));
                 break;
             case Role.SUPERVISOR:
                 transcripts = this.transcriptService.findTranscriptBySupervisor(userInfo.getUserId())
                         .stream()
-                        .map(t -> t.toDto(false, false, Role.SUPERVISOR))
+                        .map(t -> t.toDto(true, false, Role.SUPERVISOR))
                         .toList();
                 break;
             case Role.HOD:
                 transcripts = this.transcriptService.findTranscriptByHod(userInfo.getUserId())
                         .stream()
-                        .map(t -> t.toDto(false, false, Role.HOD))
+                        .map(t -> t.toDto(true, false, Role.HOD))
                         .toList();
                 break;
             default:

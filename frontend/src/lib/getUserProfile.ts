@@ -1,4 +1,5 @@
 import type { UserProfile } from "@/types/UserProfile";
+import { stringToPublicKey } from "./rsa";
 
 export function getUserProfile(): UserProfile | null {
     const userProfile = localStorage.getItem("user");
@@ -16,6 +17,6 @@ export function getUserProfile(): UserProfile | null {
         role: parsedUserProfile.role,
         departmentId: parsedUserProfile.departmentId,
         supervisorId: parsedUserProfile.supervisorId || null,
-        publicKey: parsedUserProfile.publicKey,
+        publicKey: stringToPublicKey(parsedUserProfile.publicKey),
     };
 }

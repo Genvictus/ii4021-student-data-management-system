@@ -1,3 +1,5 @@
+import type { RsaPublicKey } from "@/lib/rsa";
+
 export type UserProfile = {
     userId: string;
     email: string;
@@ -5,7 +7,7 @@ export type UserProfile = {
     role: UserRole;
     departmentId: string;
     supervisorId: string | null;
-    publicKey: string;
+    publicKey: RsaPublicKey;
 };
 
 export type UserRole = "STUDENT" | "SUPERVISOR" | "HOD";
