@@ -8,25 +8,40 @@ import type { ResponseFormat } from "../response";
 import { decryptKeys, decryptTranscriptEntries } from "./util";
 import axios from "axios";
 
-export type GetStudentTranscriptsResponse = ResponseFormat<TranscriptWithStudent[]>;
-type EncryptedTranscript = Omit<TranscriptWithStudent, "transcriptData"> & { encryptedTranscriptData: string }
-type GetEncryptedStudentTranscriptsResponse = ResponseFormat<EncryptedTranscript[]>;
+export type GetStudentTranscriptsResponse = ResponseFormat<
+    TranscriptWithStudent[]
+>;
+type EncryptedTranscript = Omit<TranscriptWithStudent, "transcriptData"> & {
+    encryptedTranscriptData: string;
+};
+type GetEncryptedStudentTranscriptsResponse = ResponseFormat<
+    EncryptedTranscript[]
+>;
 
-async function parseAndDecryptTranscripts(transcripts: EncryptedTranscript[]): Promise<TranscriptWithStudent[]> {
+async function parseAndDecryptTranscripts(
+    transcripts: EncryptedTranscript[]
+): Promise<TranscriptWithStudent[]> {
     const selfKey = await getPrivateKey(getUserProfile()!.email);
-    return transcripts.map(t => {
-        const decryptKeyString = BNToString(decryptKeys(t.encryptedKey, selfKey!));
+    return transcripts.map((t) => {
+        const decryptKeyString = BNToString(
+            decryptKeys(t.encryptedKey, selfKey!)
+        );
         const decryptKey = aesKeyFromString(decryptKeyString);
         return {
             ...t,
-            transcriptData: decryptTranscriptEntries(t.encryptedTranscriptData, decryptKey)
-        }
-    })
+            transcriptData: decryptTranscriptEntries(
+                t.encryptedTranscriptData,
+                decryptKey
+            ),
+        };
+    });
 }
 
 export async function getStudentTranscripts(): Promise<GetStudentTranscriptsResponse> {
     try {
-        const response = await api.get<GetEncryptedStudentTranscriptsResponse>("api/v1/transcripts");
+        const response = await api.get<GetEncryptedStudentTranscriptsResponse>(
+            "/api/v1/transcripts"
+        );
         const data = response.data.data;
 
         return {
@@ -35,8 +50,6 @@ export async function getStudentTranscripts(): Promise<GetStudentTranscriptsResp
             data: data ? await parseAndDecryptTranscripts(data) : null,
         };
     } catch (error) {
-        console.error(error);
-
         if (axios.isAxiosError(error) && error.response) {
             return error.response.data;
         }

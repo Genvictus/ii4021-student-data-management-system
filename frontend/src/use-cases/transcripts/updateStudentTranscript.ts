@@ -7,7 +7,9 @@ import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import type { ResponseFormat } from "@/use-cases/response";
 import { toUpdatePayload } from "./util";
 
-async function encryptDataAndKeys(transcript: TranscriptWithStudent): Promise<TranscriptUpdatePayload> {
+async function encryptDataAndKeys(
+    transcript: TranscriptWithStudent
+): Promise<TranscriptUpdatePayload> {
     const selfKey = await getPrivateKey(getUserProfile()!.email);
 
     const payload = toUpdatePayload(transcript, selfKey!);
@@ -15,11 +17,16 @@ async function encryptDataAndKeys(transcript: TranscriptWithStudent): Promise<Tr
     return payload;
 }
 
-export async function UpdateStudentTranscript(transcript: TranscriptWithStudent): Promise<ResponseFormat<string[] | null>> {
+export async function UpdateStudentTranscript(
+    transcript: TranscriptWithStudent
+): Promise<ResponseFormat<string[] | null>> {
     try {
         const processedPayload = encryptDataAndKeys(transcript);
 
-        const response = await api.post("api/v1/transcripts", processedPayload);
+        const response = await api.post(
+            "/api/v1/transcripts",
+            processedPayload
+        );
 
         console.log(response.data.data);
 

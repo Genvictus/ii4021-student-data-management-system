@@ -15,8 +15,9 @@ export async function login(
     privateKey?: RsaPrivateKey
 ): Promise<ResponseFormat<string[] | null>> {
     try {
-        const pk = privateKey ?? (await getPrivateKey(getUserProfile()!.email))!
-        const response = await api.post("api/v1/auth/login", payload);
+        const pk =
+            privateKey ?? (await getPrivateKey(getUserProfile()!.email))!;
+        const response = await api.post("/api/v1/auth/login", payload);
 
         console.log(response.data.data);
         const data = response.data.data;
