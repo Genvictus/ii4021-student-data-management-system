@@ -7,19 +7,18 @@ import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import type { ResponseFormat } from "../response";
 import { decryptKeys, decryptTranscriptEntries } from "./util";
 import axios from "axios";
+import type { EncryptedTranscriptWithStudent } from "@/types/EncryptedTranscriptWithStudent";
 
 export type GetStudentTranscriptsResponse = ResponseFormat<
     TranscriptWithStudent[]
 >;
-type EncryptedTranscript = Omit<TranscriptWithStudent, "transcriptData"> & {
-    encryptedTranscriptData: string;
-};
+
 type GetEncryptedStudentTranscriptsResponse = ResponseFormat<
-    EncryptedTranscript[]
+    EncryptedTranscriptWithStudent[]
 >;
 
 async function parseAndDecryptTranscripts(
-    transcripts: EncryptedTranscript[]
+    transcripts: EncryptedTranscriptWithStudent[]
 ): Promise<TranscriptWithStudent[]> {
     const selfKey = await getPrivateKey(getUserProfile()!.email);
     return transcripts.map((t) => {

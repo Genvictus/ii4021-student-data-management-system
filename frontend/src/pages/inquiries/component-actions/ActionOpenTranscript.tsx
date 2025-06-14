@@ -10,8 +10,12 @@ import { Separator } from "@/components/ui/separator";
 import { TranscriptView } from "@/pages/student-transcripts/component-actions/TranscriptView";
 import type { TranscriptAccessInquiry } from "@/types/TranscriptAccessInquiry";
 import { type TranscriptWithStudent } from "@/types/TranscriptWithStudent";
-import { FileText } from "lucide-react";
+import { getStudentTranscriptById } from "@/use-cases/transcripts/getStudentTranscriptById";
+import { reconstructTranscript } from "@/use-cases/transcripts/inquiries/reconstructTranscript";
+import { FileText, AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ActionOpenTranscriptProps {
     inquiry: TranscriptAccessInquiry;
@@ -23,39 +27,34 @@ export function ActionOpenTranscript(props: ActionOpenTranscriptProps) {
     const [transcript, setTranscript] = useState<TranscriptWithStudent | null>(
         null
     );
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const prepareTranscript = async () => {
+        setTranscript(null);
+        setErrorMessage(null);
+
+        const reconstructedTranscriptData = reconstructTranscript(inquiry);
+        const response = await getStudentTranscriptById(inquiry.transcriptId);
+
+        if (!response.success || !response.data) {
+            let errorMsg = "Failed to open student transcript";
+            if (response.message) {
+                errorMsg += `: ${response.message}`;
+            }
+            setErrorMessage(errorMsg);
+            return;
+        }
+
+        setTranscript({
+            ...response.data,
+            transcriptData: reconstructedTranscriptData,
+        });
+    };
 
     useEffect(() => {
-        setTranscript({
-            transcriptId: "transcript-001",
-            student: {
-                userId: "user-123",
-                email: "student1@example.com",
-                fullName: "Alice Smith",
-                role: "STUDENT",
-                publicKey: "student1-public-key",
-                department: null,
-                departmentId: "dept-001",
-                supervisorId: "hod-001",
-            },
-            studentId: "user-123",
-            transcriptStatus: "PENDING",
-            transcriptData: [
-                {
-                    courseCode: "CS101",
-                    credits: 3,
-                    score: "A",
-                },
-                {
-                    courseCode: "MA201",
-                    credits: 4,
-                    score: "B",
-                },
-            ],
-            hodId: "hod-001",
-            hod: null,
-            hodDigitalSignature: "dummy-signature-123",
-            encryptedKey: "encrypted-key-abc",
-        });
+        if (open) {
+            prepareTranscript();
+        }
     }, [open]);
 
     return (
@@ -78,17 +77,25 @@ export function ActionOpenTranscript(props: ActionOpenTranscriptProps) {
                             Transcript Details
                         </DialogTitle>
                         <Separator className="mb-2" />
-                        <div>
-                            {transcript ? (
-                                <TranscriptView
-                                    transcript={transcript}
-                                    cardScale={0.8}
-                                />
-                            ) : (
-                                "loading"
-                            )}
-                        </div>
                     </DialogHeader>
+                    {errorMessage && (
+                        <Alert variant="destructive" className="mb-4">
+                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>{errorMessage}</AlertDescription>
+                        </Alert>
+                    )}
+                    {transcript ? (
+                        <TranscriptView
+                            transcript={transcript}
+                            cardScale={0.8}
+                        />
+                    ) : !errorMessage ? (
+                        <div className="space-y-4">
+                            <Skeleton className="h-6 w-1/2" />
+                            <Skeleton className="h-96 w-full" />
+                        </div>
+                    ) : null}
                 </DialogContent>
             </Dialog>
         </div>
