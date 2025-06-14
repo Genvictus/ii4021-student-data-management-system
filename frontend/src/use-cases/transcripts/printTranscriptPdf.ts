@@ -2,7 +2,10 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 
-export function printTranscriptPdf(data: TranscriptWithStudent): void {
+export function printTranscriptPdf(
+    data: TranscriptWithStudent,
+    encryptionKey?: string
+): void {
     const doc = new jsPDF();
 
     const leftMargin = 20;

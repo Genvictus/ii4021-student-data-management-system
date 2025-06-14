@@ -16,6 +16,7 @@ import {
     studentTranscriptLoader,
 } from "./pages/student-transcripts";
 import { MyTranscript, myTranscriptLoader } from "./pages/my-transcript";
+import { ViewPdf } from "./pages/my-transcript/view-pdf";
 
 const rootRoute = createRootRoute({
     component: App,
@@ -60,7 +61,7 @@ const inquiriesRoute = createRoute({
     loader: inquiriesLoader,
 });
 
-const studentTranscript = createRoute({
+const studentTranscriptRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/student-transcripts",
     component: StudentTranscript,
@@ -74,6 +75,12 @@ const myTranscriptRoute = createRoute({
     loader: myTranscriptLoader,
 });
 
+const viewPdfRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/my-transcript/view-pdf",
+    component: ViewPdf,
+});
+
 const routeTree = rootRoute.addChildren([
     indexRoute,
     loginRoute,
@@ -81,8 +88,9 @@ const routeTree = rootRoute.addChildren([
     homeRoute,
     coursesRoute,
     inquiriesRoute,
-    studentTranscript,
+    studentTranscriptRoute,
     myTranscriptRoute,
+    viewPdfRoute,
 ]);
 
 export const router = createRouter({ routeTree });

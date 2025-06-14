@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/table";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { TranscriptActions } from "./TranscriptActions";
-import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 interface TranscriptsTableProps {

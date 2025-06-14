@@ -1,9 +1,8 @@
-import { Button } from "@/components/ui/button";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
-import { printTranscriptPdf } from "@/use-cases/transcripts/printTranscriptPdf";
 import { useLoaderData } from "@tanstack/react-router";
-import { Printer } from "lucide-react";
 import { TranscriptView } from "../student-transcripts/component-actions/TranscriptView";
+import { ActionPrintTranscriptPdf } from "./component-actions/ActionPrintTranscriptPdf";
+import { ActionViewTranscriptPdf } from "./component-actions/ActionViewTranscriptPdf";
 
 export async function myTranscriptLoader() {
     const mockData: TranscriptWithStudent = {
@@ -34,22 +33,14 @@ export async function myTranscriptLoader() {
 
 export function MyTranscript() {
     const transcript = useLoaderData({ from: "/my-transcript" });
-    const handlePrintTranscript = () => {
-        printTranscriptPdf(transcript);
-    };
 
     return (
         <div className="px-10 py-10">
             <TranscriptView transcript={transcript} />
-            <Button
-                variant="outline"
-                size="sm"
-                className="mt-5"
-                onClick={handlePrintTranscript}
-            >
-                <Printer className="w-4 h-4 mr-1" />
-                Print PDF
-            </Button>
+            <div className="space-x-3">
+                <ActionPrintTranscriptPdf transcript={transcript} />
+                <ActionViewTranscriptPdf />
+            </div>
         </div>
     );
 }

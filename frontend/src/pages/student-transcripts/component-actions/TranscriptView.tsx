@@ -30,7 +30,7 @@ export function TranscriptView(props: TranscriptViewProps) {
                 <TranscriptViewCard transcript={transcript} />
             </div>
             <div>
-                <strong>Courses:</strong>
+                <strong className="text-xl">Courses:</strong>
                 <TranscriptViewTable transcript={transcript} />
             </div>
         </div>
@@ -79,20 +79,22 @@ function TranscriptViewTable(props: TranscriptViewTableProps) {
     return (
         <Table>
             <TableHeader>
-                <TableRow className="p-2">
-                    <TableHead className="w-[150px] text-center">
+                <TableRow>
+                    <TableHead className="w-[150px] text-center py-3">
                         Course Code
                     </TableHead>
-                    <TableHead className="text-center">Credits</TableHead>
-                    <TableHead className="text-center">Score</TableHead>
+                    <TableHead className="text-center py-3">Credits</TableHead>
+                    <TableHead className="text-center py-3">Score</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {transcript.transcriptData.map((entry, index) => (
                     <TableRow key={index} className="text-center">
-                        <TableCell>{entry.courseCode}</TableCell>
-                        <TableCell>{entry.credits}</TableCell>
-                        <TableCell>{entry.score}</TableCell>
+                        <TableCell className="py-3">
+                            {entry.courseCode}
+                        </TableCell>
+                        <TableCell className="py-3">{entry.credits}</TableCell>
+                        <TableCell className="py-3">{entry.score}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
