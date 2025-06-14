@@ -69,7 +69,7 @@ const studentTranscript = createRoute({
 
 const myTranscriptRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: "/transcript",
+    path: "/my-transcript",
     component: MyTranscript,
     loader: myTranscriptLoader,
 });
