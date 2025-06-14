@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest --root tests",
+    "populate": "vitest --root scripts --run populate"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",

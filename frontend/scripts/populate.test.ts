@@ -1,3 +1,5 @@
+import { test } from "vitest";
+
 import { register } from "../src/use-cases/auth/register";
 import { createStudentTranscript } from "../src/use-cases/transcripts/createStudentTranscript";
 import { generatePrime } from "../src/lib/random";
@@ -84,4 +86,6 @@ function main() {
     populateTranscript();
 }
 
-main();
+test("Populate with dummy data to BE", () => {
+    main();
+})
