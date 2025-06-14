@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { TranscriptActionsProps } from "../TranscriptActions";
-import { Pencil, Plus } from "lucide-react";
+import { CheckCircle, CheckCircle2, Pencil, Plus, XCircle } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -111,9 +111,11 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
                     <DialogFooter>
                         <div className="flex justify-end gap-2 pt-4">
                             <Button variant="outline" onClick={handleCancel}>
+                                <XCircle />
                                 Cancel
                             </Button>
                             <Button variant="default" onClick={handleConfirm}>
+                                <CheckCircle2 />
                                 Confirm Update
                             </Button>
                         </div>

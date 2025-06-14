@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, PlusCircle } from "lucide-react";
+import { Plus, PlusCircle, XCircle } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -131,6 +131,7 @@ export function ActionCreateTranscript() {
                     <DialogFooter>
                         <div className="flex justify-end gap-2 pt-4">
                             <Button variant="outline" onClick={handleCancel}>
+                                <XCircle />
                                 Cancel
                             </Button>
                             <Button variant="default" onClick={handleConfirm}>

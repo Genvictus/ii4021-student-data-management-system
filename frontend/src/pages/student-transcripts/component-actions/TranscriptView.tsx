@@ -10,13 +10,14 @@ import {
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { Card } from "@/components/ui/card";
 import { ProfileItem } from "@/pages/home/ProfileItem";
-import { User, Badge, GraduationCap, BadgeCheck } from "lucide-react";
+import { User, GraduationCap, BadgeCheck, IdCard } from "lucide-react";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 interface TranscriptViewProps {
     transcript: TranscriptWithStudent;
     cardScale?: number;
 }
+
 export function TranscriptView(props: TranscriptViewProps) {
     const { transcript, cardScale } = props;
     return (
@@ -47,7 +48,7 @@ export function TranscriptViewCard(props: TranscriptViewCardProps) {
     return (
         <Card className="flex-1 shadow-xl border p-4 w-sm">
             <ProfileItem
-                icon={Badge}
+                icon={IdCard}
                 label="Student ID"
                 value={transcript.studentId}
             />
