@@ -10,7 +10,7 @@ import { encryptKeys, encryptTranscriptEntries, toUpdatePayload } from "./util";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 
 async function getHodPublicKey(departmentId: string): Promise<RsaPublicKey> {
-    const response = await api.get("/api/v1/users", {
+    const response = await api.get("api/v1/users", {
         params: { departmentId: departmentId, role: "HOD" },
     });
     return stringToPublicKey(response.data.publicKey);
@@ -45,6 +45,12 @@ async function encryptDataAndKeys(
     return payload;
 }
 
+// TODO: @Genvictus
+// 1. Ini bagusnya transcript type nya diganti jadi Pick<TranscriptWithStudent, "studentId" | "transcriptData">
+// Karena transcriptId kan belum ada pas datanya dibikin, dan transcript.student juga gaperlu dimasukin (cuma perlu studentId).
+// Please refer to src/pages/student-transcripts/component-actions/ActionCreateTranscript.tsx
+// 2. Kenapa ini returnnya <ResponseFormat<string[] | null> ???
+// Fix ASAP
 export async function createStudentTranscript(
     transcript: TranscriptWithStudent,
     encryptionKey: string
@@ -52,10 +58,7 @@ export async function createStudentTranscript(
     try {
         const processedPayload = encryptDataAndKeys(transcript, encryptionKey);
 
-        const response = await api.post(
-            "/api/v1/transcripts",
-            processedPayload
-        );
+        const response = await api.post("api/v1/transcripts", processedPayload);
 
         console.log(response.data.data);
 

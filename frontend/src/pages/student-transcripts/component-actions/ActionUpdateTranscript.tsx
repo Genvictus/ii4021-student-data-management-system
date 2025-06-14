@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { TranscriptActionsProps } from "../TranscriptActions";
-import { CheckCircle, CheckCircle2, Pencil, Plus, XCircle } from "lucide-react";
+import { CheckCircle2, Pencil, Plus, XCircle } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { TranscriptCourseEditTable } from "./TranscriptCourseEditTable";
 import { TranscriptViewCard } from "./TranscriptView";
+import { UpdateStudentTranscript } from "@/use-cases/transcripts/updateStudentTranscript";
+import { toast } from "sonner";
 
 export function ActionUpdateTranscript(props: TranscriptActionsProps) {
     const { transcript } = props;
@@ -21,11 +23,17 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
         structuredClone(transcript.transcriptData)
     );
 
+    useEffect(() => {
+        if (open) {
+            structuredClone(transcript.transcriptData);
+        }
+    }, [open]);
+
     const removeEntry = (index: number) => {
         setData((prev) => prev.filter((_, i) => i !== index));
     };
 
-    function addEntry() {
+    const addEntry = () => {
         setData((prev) => [
             ...prev,
             {
@@ -34,7 +42,7 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
                 score: "A" as const,
             },
         ]);
-    }
+    };
 
     const updateEntry = (
         index: number,
@@ -48,13 +56,22 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
         );
     };
 
-    const handleConfirm = () => {
-        console.log("Updated transcriptData:", data);
+    const handleConfirm = async () => {
+        const response = await UpdateStudentTranscript(transcript);
+
+        if (response.success) {
+            toast.success("Successfully updated transcript");
+        } else {
+            let errorMsg = "Failed to update transcript";
+            toast.error(errorMsg, {
+                description: response.message ?? undefined,
+            });
+        }
+
         setOpen(false);
     };
 
     const handleCancel = () => {
-        setData(structuredClone(transcript.transcriptData));
         setOpen(false);
     };
 

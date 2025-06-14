@@ -14,20 +14,56 @@ import { calculateGpa } from "@/lib/calculateGpa";
 import { Separator } from "@/components/ui/separator";
 import { type TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { TranscriptCourseEditTable } from "./TranscriptCourseEditTable";
+import { createStudentTranscript } from "@/use-cases/transcripts/createStudentTranscript";
+import type { ResponseFormat } from "@/use-cases/response";
+import type { EncryptedTranscriptWithStudent } from "@/types/EncryptedTranscriptWithStudent";
+import { toast } from "sonner";
 
-const initialTranscript: Pick<
+type TranscriptInput = Pick<
     TranscriptWithStudent,
     "studentId" | "transcriptData"
-> = {
+>;
+const initialTranscript: TranscriptInput = {
     studentId: "",
     transcriptData: [],
 };
+
+async function createStudentTranscriptMock(
+    transcript: TranscriptInput,
+    encryptionKey: string
+): Promise<ResponseFormat<EncryptedTranscriptWithStudent>> {
+    return {
+        success: true,
+        message: "OK",
+        data: {
+            transcriptId: "transcript-001",
+            student: {
+                userId: "user-123",
+                email: "student1@example.com",
+                fullName: "Alice Smith",
+                role: "STUDENT",
+                publicKey: "student1-public-key",
+                department: null,
+                departmentId: "dept-001",
+                supervisorId: "hod-001",
+            },
+            studentId: "user-123",
+            transcriptStatus: "PENDING",
+            encryptedTranscriptData: "adfafasdfasdf",
+            hodId: "hod-001",
+            hod: null,
+            hodDigitalSignature: "dummy-signature-123",
+            encryptedKey: "encrypted-key-abc",
+        },
+    };
+}
 
 export function ActionCreateTranscript() {
     const [open, setOpen] = useState(false);
     const [transcript, setTranscript] = useState(
         structuredClone(initialTranscript)
     );
+    const [encryptionKey, setEncryptionKey] = useState<string>("");
 
     const updateEntry = (
         index: number,
@@ -61,8 +97,22 @@ export function ActionCreateTranscript() {
         }));
     };
 
-    const handleConfirm = () => {
-        console.log("Created transcript:", transcript);
+    const handleConfirm = async () => {
+        if (!encryptionKey) return;
+        const response = await createStudentTranscriptMock(
+            transcript,
+            encryptionKey
+        );
+
+        if (response.success) {
+            toast.success("Successfully approved inquiry");
+        } else {
+            let errorMsg = "Failed to approve inquiry";
+            toast.error(errorMsg, {
+                description: response.message ?? undefined,
+            });
+        }
+
         setOpen(false);
     };
 
@@ -70,6 +120,11 @@ export function ActionCreateTranscript() {
         setTranscript(structuredClone(initialTranscript));
         setOpen(false);
     };
+
+    const confirmDisabled =
+        !transcript.studentId.trim() ||
+        !encryptionKey.trim() ||
+        transcript.transcriptData.length === 0;
 
     return (
         <div className="flex gap-2">
@@ -89,7 +144,6 @@ export function ActionCreateTranscript() {
                         <Separator />
                     </DialogHeader>
 
-                    {/* Scrollable content */}
                     <div className="space-y-4 text-base max-h-[70vh] overflow-y-auto pr-2">
                         <div>
                             <strong>Student ID:</strong>
@@ -105,10 +159,19 @@ export function ActionCreateTranscript() {
                             />
                         </div>
                         <div>
+                            <strong>Encryption Key:</strong>
+                            <Input
+                                className="mt-1 w-1/2"
+                                value={encryptionKey}
+                                onChange={(e) => {
+                                    setEncryptionKey(e.target.value);
+                                }}
+                            />
+                        </div>
+                        <div>
                             <strong>GPA:</strong>{" "}
                             {calculateGpa(transcript.transcriptData).gpa}
                         </div>
-
                         <div>
                             <strong>Courses:</strong>
                             <TranscriptCourseEditTable
@@ -134,7 +197,11 @@ export function ActionCreateTranscript() {
                                 <XCircle />
                                 Cancel
                             </Button>
-                            <Button variant="default" onClick={handleConfirm}>
+                            <Button
+                                variant="default"
+                                onClick={handleConfirm}
+                                disabled={confirmDisabled}
+                            >
                                 Confirm
                             </Button>
                         </div>

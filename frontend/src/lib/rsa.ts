@@ -58,7 +58,7 @@ export function generateKeyPair(p: BN, q: BN): RsaKeyPair {
     const qMinus1 = q.sub(one);
     const totient_n = pMinus1.mul(qMinus1);
 
-    const e: BN = new BN("65537"); // TODO: decide on this later
+    const e: BN = new BN("65537");
     const d = e.invm(totient_n);
 
     const publicKey: RsaPublicKey = {

@@ -36,29 +36,37 @@ async function parseAndDecryptTranscripts(
     });
 }
 
+// export async function getStudentTranscripts(): Promise<GetStudentTranscriptsResponse> {
+//     try {
+//         const response = await api.get<GetEncryptedStudentTranscriptsResponse>(
+//             "/api/v1/transcripts"
+//         );
+//         const data = response.data.data;
+
+//         return {
+//             success: true,
+//             message: response.data.message,
+//             data: data ? await parseAndDecryptTranscripts(data) : null,
+//         };
+//     } catch (error) {
+//         if (axios.isAxiosError(error) && error.response) {
+//             return error.response.data;
+//         }
+
+//         return {
+//             success: false,
+//             message: "An unexpected error occurred",
+//             data: null,
+//         };
+//     }
+// }
+
 export async function getStudentTranscripts(): Promise<GetStudentTranscriptsResponse> {
-    try {
-        const response = await api.get<GetEncryptedStudentTranscriptsResponse>(
-            "/api/v1/transcripts"
-        );
-        const data = response.data.data;
-
-        return {
-            success: true,
-            message: response.data.message,
-            data: data ? await parseAndDecryptTranscripts(data) : null,
-        };
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            return error.response.data;
-        }
-
-        return {
-            success: false,
-            message: "An unexpected error occurred",
-            data: null,
-        };
-    }
+    return {
+        success: true,
+        message: "Successfully get transcripts",
+        data: dummyData,
+    };
 }
 
 const dummyData: TranscriptWithStudent[] = [
