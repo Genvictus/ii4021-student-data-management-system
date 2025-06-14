@@ -33,7 +33,7 @@ export function StudentTranscript() {
                     <TriangleAlert className="h-4 w-4" />
                     <AlertTitle>No Transcripts Found</AlertTitle>
                     <AlertDescription>
-                        You don’t have any transcript records yet.
+                        You don't have any transcript records yet.
                     </AlertDescription>
                 </Alert>
             ) : (

@@ -26,12 +26,24 @@ export function InquiriesTable(props: InquiriesTableProps) {
         <Table>
             <TableHeader>
                 <TableRow className="bg-slate-800 text-slate-100">
-                    <TableHead>Inquiry ID</TableHead>
-                    <TableHead>Transcript ID</TableHead>
-                    <TableHead>Requester ID</TableHead>
-                    <TableHead>Requestee ID</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Inquiry ID
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Transcript ID
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Requester ID
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Requestee ID
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Status
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Actions
+                    </TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

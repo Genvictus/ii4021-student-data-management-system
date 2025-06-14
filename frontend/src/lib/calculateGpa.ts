@@ -10,7 +10,14 @@ const ScoreConversion = {
     E: 0,
 };
 
-export function calculateGpa(transcriptEntries: TranscriptEntry[]) {
+type CalculateGpaResult = {
+    gpa: number;
+    totalCredits: number;
+};
+
+export function calculateGpa(
+    transcriptEntries: TranscriptEntry[]
+): CalculateGpaResult {
     let totalCredits = 0;
     let totalConvertedScore = 0;
 
@@ -21,9 +28,12 @@ export function calculateGpa(transcriptEntries: TranscriptEntry[]) {
     }
 
     if (totalCredits === 0) {
-        return 0;
+        return { gpa: 0, totalCredits: 0 };
     }
 
     const gpa = totalConvertedScore / totalCredits;
-    return parseFloat(gpa.toFixed(2));
+    return {
+        gpa: parseFloat(gpa.toFixed(2)),
+        totalCredits,
+    };
 }

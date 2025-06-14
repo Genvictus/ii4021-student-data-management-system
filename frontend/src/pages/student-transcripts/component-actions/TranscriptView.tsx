@@ -41,7 +41,7 @@ interface TranscriptViewCardProps {
     transcript: TranscriptWithStudent;
 }
 
-function TranscriptViewCard(props: TranscriptViewCardProps) {
+export function TranscriptViewCard(props: TranscriptViewCardProps) {
     const { transcript } = props;
 
     return (
@@ -59,7 +59,7 @@ function TranscriptViewCard(props: TranscriptViewCardProps) {
             <ProfileItem
                 icon={GraduationCap}
                 label="GPA"
-                value={calculateGpa(transcript.transcriptData)}
+                value={calculateGpa(transcript.transcriptData).gpa}
             />
             <ProfileItem
                 icon={BadgeCheck}

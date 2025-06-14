@@ -1,11 +1,15 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
+import { calculateGpa } from "@/lib/calculateGpa";
 
 export function printTranscriptPdf(
     data: TranscriptWithStudent,
     encryptionKey?: string
 ): void {
+    // TODO @Genvictus: encrypt with RC4!!!
+    const { gpa, totalCredits } = calculateGpa(data.transcriptData);
+
     const doc = new jsPDF();
 
     const leftMargin = 20;
@@ -20,6 +24,8 @@ export function printTranscriptPdf(
     doc.text(`Student ID: ${data.studentId}`, leftMargin, 40);
     doc.text(`Full Name: ${data.student.fullName}`, leftMargin, 50);
     doc.text(`Transcript Status: ${data.transcriptStatus}`, leftMargin, 60);
+    doc.text(`Total Credits: ${totalCredits}`, leftMargin, 70);
+    doc.text(`GPA: ${gpa}`, leftMargin, 80);
 
     const tableData = data.transcriptData.map((entry) => [
         entry.courseCode,
@@ -28,7 +34,7 @@ export function printTranscriptPdf(
     ]);
 
     autoTable(doc, {
-        startY: 75,
+        startY: 95,
         head: [["Course Code", "Credits", "Score"]],
         body: tableData,
         theme: "grid",

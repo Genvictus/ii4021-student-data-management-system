@@ -18,7 +18,9 @@ export function CoursesTable(props: CorusesTableProps) {
         <Table>
             <TableHeader>
                 <TableRow className="bg-slate-800 text-slate-100">
-                    <TableHead className="w-[100px]">Code</TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Code
+                    </TableHead>
                     <TableHead className="uppercase font-bold tracking-wide">
                         Name
                     </TableHead>

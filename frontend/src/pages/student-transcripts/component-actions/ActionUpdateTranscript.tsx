@@ -4,17 +4,15 @@ import { Pencil, Plus } from "lucide-react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { calculateGpa } from "@/lib/calculateGpa";
 import { Separator } from "@/components/ui/separator";
 import { TranscriptCourseEditTable } from "./TranscriptCourseEditTable";
-import { Badge } from "@/components/ui/badge";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { TranscriptViewCard } from "./TranscriptView";
 
 export function ActionUpdateTranscript(props: TranscriptActionsProps) {
     const { transcript } = props;
@@ -80,22 +78,13 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
                     {/* Scrollable content */}
                     <div className="space-y-4 text-base max-h-[70vh] overflow-y-auto pr-2">
                         <div className="space-y-4 text-base">
-                            <div>
-                                <strong>Student ID:</strong>{" "}
-                                {transcript.student.userId}
-                            </div>
-                            <div>
-                                <strong>Student:</strong>{" "}
-                                {transcript.student.fullName}
-                            </div>
-                            <div>
-                                <strong>Status:</strong>{" "}
-                                <StatusBadge
-                                    status={transcript.transcriptStatus}
-                                />
-                            </div>
-                            <div>
-                                <strong>GPA:</strong> {calculateGpa(data)}
+                            <div
+                                style={{
+                                    transform: `scale(0.8)`,
+                                    transformOrigin: "top left",
+                                }}
+                            >
+                                <TranscriptViewCard transcript={transcript} />
                             </div>
 
                             <div>
@@ -116,23 +105,19 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
                                     </Button>
                                 </div>
                             </div>
-
-                            <div className="flex justify-end gap-2 pt-4">
-                                <Button
-                                    variant="outline"
-                                    onClick={handleCancel}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    variant="default"
-                                    onClick={handleConfirm}
-                                >
-                                    Confirm Update
-                                </Button>
-                            </div>
                         </div>
                     </div>
+
+                    <DialogFooter>
+                        <div className="flex justify-end gap-2 pt-4">
+                            <Button variant="outline" onClick={handleCancel}>
+                                Cancel
+                            </Button>
+                            <Button variant="default" onClick={handleConfirm}>
+                                Confirm Update
+                            </Button>
+                        </div>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>

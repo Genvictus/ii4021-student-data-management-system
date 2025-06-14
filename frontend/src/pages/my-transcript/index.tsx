@@ -36,7 +36,7 @@ export function MyTranscript() {
                     <TriangleAlert className="h-4 w-4" />
                     <AlertTitle>No Transcript Found</AlertTitle>
                     <AlertDescription>
-                        You don’t have any transcript data yet.
+                        You don't have any transcript data yet.
                     </AlertDescription>
                 </Alert>
             ) : (

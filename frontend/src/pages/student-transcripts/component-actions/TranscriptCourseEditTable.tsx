@@ -48,10 +48,18 @@ export function TranscriptCourseEditTable(
         <Table className="mt-2">
             <TableHeader>
                 <TableRow className="text-center">
-                    <TableHead>Course Code</TableHead>
-                    <TableHead>Credits</TableHead>
-                    <TableHead>Score</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Course Code
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Credits
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Score
+                    </TableHead>
+                    <TableHead className="uppercase font-bold tracking-wide">
+                        Action
+                    </TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

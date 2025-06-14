@@ -106,7 +106,7 @@ export function ActionCreateTranscript() {
                         </div>
                         <div>
                             <strong>GPA:</strong>{" "}
-                            {calculateGpa(transcript.transcriptData)}
+                            {calculateGpa(transcript.transcriptData).gpa}
                         </div>
 
                         <div>
