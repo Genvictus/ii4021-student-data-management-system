@@ -61,7 +61,7 @@ function HodMenu() {
 function ViewTranscriptMenuItem() {
     const navigate = useNavigate();
     const handleClick = () => {
-        navigate({ to: "/transcript" });
+        navigate({ to: "/my-transcript" });
     };
 
     return (

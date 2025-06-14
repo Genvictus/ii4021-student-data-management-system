@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { TranscriptActions } from "./TranscriptActions";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 interface TranscriptsTableProps {
     transcripts: TranscriptWithStudent[];
@@ -50,19 +50,9 @@ export function TranscriptsTable(props: TranscriptsTableProps) {
                                 {transcript.student.departmentId}
                             </TableCell>
                             <TableCell>
-                                <Badge
-                                    variant={
-                                        transcript.transcriptStatus ===
-                                        "APPROVED"
-                                            ? "default"
-                                            : transcript.transcriptStatus ===
-                                              "REJECTED"
-                                            ? "destructive"
-                                            : "secondary"
-                                    }
-                                >
-                                    {transcript.transcriptStatus}
-                                </Badge>
+                                <StatusBadge
+                                    status={transcript.transcriptStatus}
+                                />
                             </TableCell>
                             <TableCell>
                                 <TranscriptActions transcript={transcript} />
