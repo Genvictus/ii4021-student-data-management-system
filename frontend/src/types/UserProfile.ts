@@ -5,6 +5,7 @@ export type UserProfile = {
     role: UserRole;
     departmentId: string;
     supervisorId: string | null;
+    publicKey: string;
 };
 
 export type UserRole = "STUDENT" | "SUPERVISOR" | "HOD";

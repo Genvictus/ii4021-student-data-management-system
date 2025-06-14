@@ -16,5 +16,6 @@ export function getUserProfile(): UserProfile | null {
         role: parsedUserProfile.role,
         departmentId: parsedUserProfile.departmentId,
         supervisorId: parsedUserProfile.supervisorId || null,
+        publicKey: parsedUserProfile.publicKey,
     };
 }
