@@ -34,85 +34,58 @@ import lombok.AllArgsConstructor;
 public class TranscriptController {
     private final TranscriptService transcriptService;
 
+    @RequiresRole(value = {Role.STUDENT, Role.SUPERVISOR, Role.HOD})
     @GetMapping()
     public FormattedResponseEntity<List<TranscriptDto>> getTranscripts(
-            @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
-        List<TranscriptDto> transcripts;
-        switch (userInfo.getRole()) {
-            case Role.STUDENT:
+            @AuthenticationPrincipal AuthenticatedUserInfo userInfo
+    ) {
+        List<TranscriptDto> transcripts = switch (userInfo.getRole()) {
+            case Role.STUDENT -> {
                 Transcript transcript = this.transcriptService.findTranscriptByStudentId(userInfo.getUserId()).get();
-                transcripts = List.of(transcript.toDto(true, false, Role.STUDENT));
-                break;
-            case Role.SUPERVISOR:
-                transcripts = this.transcriptService.findTranscriptBySupervisor(userInfo.getUserId())
-                        .stream()
-                        .map(t -> t.toDto(true, false, Role.SUPERVISOR))
-                        .toList();
-                break;
-            case Role.HOD:
-                transcripts = this.transcriptService.findTranscriptByHod(userInfo.getUserId())
-                        .stream()
-                        .map(t -> t.toDto(true, false, Role.HOD))
-                        .toList();
-                break;
-            default:
-                throw new IllegalArgumentException("Role not found for this operation");
-        }
+                yield List.of(transcript.toDto(true, false, Role.STUDENT));
+            }
+            case Role.SUPERVISOR -> this.transcriptService.findTranscriptBySupervisor(userInfo.getUserId())
+                    .stream()
+                    .map(t -> t.toDto(true, false, Role.SUPERVISOR))
+                    .toList();
+            case Role.HOD -> this.transcriptService.findTranscriptByHod(userInfo.getUserId())
+                    .stream()
+                    .map(t -> t.toDto(true, false, Role.HOD))
+                    .toList();
+        };
         return new FormattedResponseEntity<>(
                 HttpStatus.OK,
                 true,
-                String.format("Transcript retrieved for role %d", userInfo.getRole().name()),
-                transcripts);
+                String.format("Transcript retrieved for role %s", userInfo.getRole().name()),
+                transcripts
+        );
     }
 
+    @RequiresRole(value = {Role.SUPERVISOR})
     @GetMapping("/student/{id}")
     public FormattedResponseEntity<String> getStudentTranscriptId(
-            @PathVariable("id") String studentId) {
+            @PathVariable("id") String studentId
+    ) {
         Optional<String> foundTranscriptId = this.transcriptService.getStudentTranscriptId(studentId);
         return foundTranscriptId.map(id -> new FormattedResponseEntity<>(
                 HttpStatus.OK,
                 true,
                 "Successfully get student's transcript ID",
-                id)).orElseGet(() -> new FormattedResponseEntity<>(
-                        HttpStatus.NOT_FOUND,
-                        false,
-                        "Transcript with student ID " + studentId + " not found",
-                        null));
-    }
-
-    @GetMapping("/{id}")
-    public FormattedResponseEntity<TranscriptDto> getById(
-            @PathVariable("id") String id,
-            @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
-
-        Role viewerRole = userInfo.getRole();
-        String getterId = userInfo.getUserId();
-        var transcript = this.transcriptService.getTranscriptById(id);
-
-        if (transcript.isPresent() && !transcript.get().getStudent().getSupervisorId().equals(getterId)) {
-            throw new ForbiddenException("You can only get your student's transcript");
-        }
-
-        var transcriptDto = transcript.map(t -> t.toDto(
-                true,
+                id
+        )).orElseGet(() -> new FormattedResponseEntity<>(
+                HttpStatus.NOT_FOUND,
                 false,
-                viewerRole));
-
-        return transcriptDto.map(dto -> new FormattedResponseEntity<>(
-                HttpStatus.OK,
-                true,
-                "Successfully found transcript",
-                dto)).orElseGet(() -> new FormattedResponseEntity<>(
-                        HttpStatus.NOT_FOUND,
-                        false,
-                        "Transcript with ID " + id + " not found",
-                        null));
+                "Transcript with student ID " + studentId + " not found",
+                null
+        ));
     }
 
+    @RequiresRole(value = {Role.SUPERVISOR})
     @PostMapping()
     public FormattedResponseEntity<TranscriptDto> createTranscript(
             @Valid @RequestBody TranscriptUpdateDto transcriptCreationDto,
-            @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
+            @AuthenticationPrincipal AuthenticatedUserInfo userInfo
+    ) {
         Transcript transcript = transcriptCreationDto.toTranscript();
         TranscriptDto createdTranscript = this.transcriptService
                 .createTranscript(transcript, userInfo.getUserId(), userInfo.getDepartmentId())
@@ -120,32 +93,58 @@ public class TranscriptController {
         return new FormattedResponseEntity<TranscriptDto>(HttpStatus.OK, true, "Transcript created", createdTranscript);
     }
 
+    @RequiresRole(value = {Role.SUPERVISOR, Role.HOD})
+    @GetMapping("/{id}")
+    public FormattedResponseEntity<TranscriptDto> getById(
+            @PathVariable("id") String id,
+            @AuthenticationPrincipal AuthenticatedUserInfo userInfo
+    ) {
+
+        Role viewerRole = userInfo.getRole();
+        String getterId = userInfo.getUserId();
+        var transcript = this.transcriptService.getTranscriptById(id);
+
+//        Punten ini dihapus dulu karena perlu beberapa data untuk nampilin transcript setelah rekonstruksi
+//        if (transcript.isPresent() && !transcript.get().getStudent().getSupervisorId().equals(getterId)) {
+//            throw new ForbiddenException("You can only get your student's transcript");
+//        }
+
+        var transcriptDto = transcript.map(t -> t.toDto(
+                true,
+                false,
+                viewerRole
+        ));
+
+        return transcriptDto.map(dto -> new FormattedResponseEntity<>(
+                HttpStatus.OK,
+                true,
+                "Successfully found transcript",
+                dto
+        )).orElseGet(() -> new FormattedResponseEntity<>(
+                HttpStatus.NOT_FOUND,
+                false,
+                "Transcript with ID " + id + " not found",
+                null
+        ));
+    }
+
+    @RequiresRole(value = {Role.SUPERVISOR})
     @PutMapping("/{id}")
     public FormattedResponseEntity<Object> updateTranscript(
             @PathVariable("id") String id,
             @Valid @RequestBody TranscriptUpdateDto transcript,
-            @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
-        switch (userInfo.getRole()) {
-            case Role.HOD:
-                this.transcriptService.signTranscript(id, transcript.getHodDigitalSignature());
-                break;
-            case Role.SUPERVISOR:
-                this.transcriptService.updateTranscript(transcript.toTranscript());
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        // spec: Update in a PUT fashion, don't forget to validate based on updaterId
-        // like above
+            @AuthenticationPrincipal AuthenticatedUserInfo userInfo
+    ) {
+        this.transcriptService.updateTranscript(transcript.toTranscript());
         return new FormattedResponseEntity<>(HttpStatus.OK, true, "ok", null);
     }
 
-    @RequiresRole(value = { Role.HOD })
+    @RequiresRole(value = {Role.HOD})
     @PatchMapping("/{id}/signature")
     public FormattedResponseEntity<Object> updateSignature(
             @PathVariable("id") String id,
             @RequestBody String signature // TODO: make a DTO for this request so that signature will be in
-                                          // request body instead
+            // request body instead
     ) {
         this.transcriptService.signTranscript(id, signature);
         return new FormattedResponseEntity<>(HttpStatus.OK, true, "ok", null);
