@@ -12,7 +12,7 @@ import { getUserProfile } from "@/lib/getUserProfile";
 import { ActionViewParticipants } from "./component-actions/ActionViewParticipants";
 import { ActionApproveInquiry } from "./component-actions/ActionApproveInquiry";
 import { ActionOpenTranscript } from "./component-actions/ActionOpenTranscript";
-import { ActionRejectInquiry } from "./component-actions/ActionReject";
+import { ActionRejectInquiry } from "./component-actions/ActionRejectInquiry";
 import { ActionJoinInquiry } from "./component-actions/ActionJoinInquiry";
 
 interface InquiriesTableProps {

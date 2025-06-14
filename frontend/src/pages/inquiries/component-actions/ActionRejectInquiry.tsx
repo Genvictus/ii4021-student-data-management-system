@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { X, XCircle, ShieldX, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
+import { rejectTranscriptAccessInquiry } from "@/use-cases/transcripts/inquiries/rejectTranscriptAccessInquiry";
+import { toast } from "sonner";
 
 interface ActionRejectInquiryProps {
     inquiry: TranscriptAccessInquiry;
@@ -19,8 +21,18 @@ interface ActionRejectInquiryProps {
 export function ActionRejectInquiry({ inquiry }: ActionRejectInquiryProps) {
     const [open, setOpen] = useState(false);
 
-    const handleConfirm = () => {
-        // Will implement later
+    const handleConfirm = async () => {
+        const response = await rejectTranscriptAccessInquiry(inquiry);
+        if (response.success) {
+            toast.success("Successfully rejected inquiry");
+        } else {
+            let errorMsg = "Failed to reject inquiry";
+            toast.error(errorMsg, {
+                description: response.message ?? undefined,
+            });
+        }
+
+        setOpen(false);
     };
 
     const handleCancel = () => {

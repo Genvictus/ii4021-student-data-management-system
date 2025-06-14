@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
 import { useState } from "react";
+import { approveTranscriptAccessInquiry } from "@/use-cases/transcripts/inquiries/approveTranscriptAccessInquiry";
+import { toast } from "sonner";
 
 interface ActionApproveInquiryProps {
     inquiry: TranscriptAccessInquiry;
@@ -19,8 +21,18 @@ interface ActionApproveInquiryProps {
 export function ActionApproveInquiry({ inquiry }: ActionApproveInquiryProps) {
     const [open, setOpen] = useState(false);
 
-    const handleConfirm = () => {
-        // Will implement later
+    const handleConfirm = async () => {
+        const response = await approveTranscriptAccessInquiry(inquiry);
+        if (response.success) {
+            toast.success("Successfully approved inquiry");
+        } else {
+            let errorMsg = "Failed to approve inquiry";
+            toast.error(errorMsg, {
+                description: response.message ?? undefined,
+            });
+        }
+
+        setOpen(false);
     };
 
     const handleCancel = () => {
