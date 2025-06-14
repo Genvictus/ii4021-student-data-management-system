@@ -19,7 +19,7 @@ export function Courses() {
 
     return (
         <div className="p-10">
-            <h1 className="pb-3 text-2xl">View Courses</h1>
+            <h1 className="pb-3 text-2xl font-semibold">View Courses</h1>
             <CoursesTable courses={courses} />
         </div>
     );

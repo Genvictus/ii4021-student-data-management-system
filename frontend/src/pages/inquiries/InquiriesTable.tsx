@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import {
     Table,
     TableBody,
@@ -7,43 +7,44 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import type { Course } from "@/types/Course";
+import type { TranscriptAccessInquiry } from "@/types/TranscriptAccessInquiry";
+import { getUserProfile } from "@/lib/getUserProfile";
+import { ActionViewParticipants } from "./component-actions/ActionViewParticipants";
+import { ActionApproveInquiry } from "./component-actions/ActionApproveInquiry";
+import { ActionOpenTranscript } from "./component-actions/ActionOpenTranscript";
+import { ActionRejectInquiry } from "./component-actions/ActionReject";
+import { ActionJoinInquiry } from "./component-actions/ActionJoinInquiry";
 
 interface InquiriesTableProps {
-    inquiries: Course[];
+    inquiries: TranscriptAccessInquiry[];
 }
 
 export function InquiriesTable(props: InquiriesTableProps) {
     const { inquiries } = props;
+
     return (
         <Table>
             <TableHeader>
                 <TableRow className="bg-slate-800 text-slate-100">
-                    <TableHead className="w-[100px]">Code</TableHead>
-                    <TableHead className="uppercase font-bold tracking-wide">
-                        Name
-                    </TableHead>
-                    <TableHead className="uppercase font-bold tracking-wide">
-                        Credits
-                    </TableHead>
-                    <TableHead className="uppercase font-bold tracking-wide">
-                        Department ID
-                    </TableHead>
-                    <TableHead className="uppercase font-bold tracking-wide">
-                        Actions
-                    </TableHead>
+                    <TableHead>Inquiry ID</TableHead>
+                    <TableHead>Transcript ID</TableHead>
+                    <TableHead>Requester ID</TableHead>
+                    <TableHead>Requestee ID</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {inquiries.length > 0 ? (
                     inquiries.map((inquiry) => (
-                        <TableRow key={inquiry.courseId}>
-                            <TableCell className="font-medium">
-                                {inquiry.code}
+                        <TableRow key={inquiry.inquiryId}>
+                            <TableCell>{inquiry.inquiryId}</TableCell>
+                            <TableCell>{inquiry.transcriptId}</TableCell>
+                            <TableCell>{inquiry.requesterId}</TableCell>
+                            <TableCell>{inquiry.requesteeId}</TableCell>
+                            <TableCell>
+                                <StatusBadge status={inquiry.inquiryStatus} />
                             </TableCell>
-                            <TableCell>{inquiry.name}</TableCell>
-                            <TableCell>{inquiry.credits}</TableCell>
-                            <TableCell>{inquiry.departmentId}</TableCell>
                             <TableCell>
                                 <InquiryActions inquiry={inquiry} />
                             </TableCell>
@@ -52,7 +53,7 @@ export function InquiriesTable(props: InquiriesTableProps) {
                 ) : (
                     <TableRow>
                         <TableCell
-                            colSpan={4}
+                            colSpan={6}
                             className="text-center text-muted-foreground"
                         >
                             No inquiries available
@@ -65,21 +66,37 @@ export function InquiriesTable(props: InquiriesTableProps) {
 }
 
 interface InquiryActionsProps {
-    inquiry: Course;
+    inquiry: TranscriptAccessInquiry;
 }
 
-function InquiryActions(props: InquiryActionsProps) {
-    return (
-        <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-                View
-            </Button>
-            <Button variant="secondary" size="sm">
-                Edit
-            </Button>
-            <Button variant="destructive" size="sm">
-                Delete
-            </Button>
-        </div>
+export function InquiryActions({ inquiry }: InquiryActionsProps) {
+    const userProfile = getUserProfile();
+    if (!userProfile) return null;
+
+    const isRequester = userProfile.userId === inquiry.requesterId;
+    const isRequestee = userProfile.userId === inquiry.requesteeId;
+    const isParticipant = inquiry.participants.some(
+        (el) => el.id === userProfile.userId
     );
+
+    let Actions: React.ReactNode[] = [];
+
+    if (isRequester || isParticipant) {
+        Actions = [
+            <ActionViewParticipants key="view" inquiry={inquiry} />,
+            <ActionOpenTranscript key="open" inquiry={inquiry} />,
+        ];
+    } else if (isRequestee) {
+        Actions = [
+            <ActionApproveInquiry key="approve" inquiry={inquiry} />,
+            <ActionRejectInquiry key="reject" inquiry={inquiry} />,
+        ];
+    } else {
+        Actions = [
+            <ActionViewParticipants key="view" inquiry={inquiry} />,
+            <ActionJoinInquiry key="join" inquiry={inquiry} />,
+        ];
+    }
+
+    return <div className="flex gap-2">{Actions}</div>;
 }

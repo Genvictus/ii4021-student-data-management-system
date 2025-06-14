@@ -27,7 +27,7 @@ export function ActionViewTranscript(props: TranscriptActionsProps) {
                 </DialogTrigger>
                 <DialogContent className="!w-[60vw] !max-w-[60vw]">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl">
+                        <DialogTitle className="text-2xl font-semibold">
                             Transcript Details
                         </DialogTitle>
                         <Separator className="mb-2" />

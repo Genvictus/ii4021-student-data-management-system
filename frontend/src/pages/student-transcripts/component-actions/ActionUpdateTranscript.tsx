@@ -71,7 +71,7 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
                 </DialogTrigger>
                 <DialogContent className="!w-[60vw] !max-w-[60vw]">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl">
+                        <DialogTitle className="text-2xl font-semibold">
                             Update Transcript
                         </DialogTitle>
                         <Separator />

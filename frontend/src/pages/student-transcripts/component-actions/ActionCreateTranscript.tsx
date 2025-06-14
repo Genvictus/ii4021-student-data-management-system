@@ -3,7 +3,7 @@ import { Plus, PlusCircle } from "lucide-react";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -15,29 +15,18 @@ import { Separator } from "@/components/ui/separator";
 import { type TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { TranscriptCourseEditTable } from "./TranscriptCourseEditTable";
 
-const dummyTranscript: Pick<
+const initialTranscript: Pick<
     TranscriptWithStudent,
     "studentId" | "transcriptData"
 > = {
-    studentId: "user-123",
-    transcriptData: [
-        {
-            courseCode: "CS101",
-            credits: 3,
-            score: "A",
-        },
-        {
-            courseCode: "MA201",
-            credits: 4,
-            score: "B",
-        },
-    ],
+    studentId: "",
+    transcriptData: [],
 };
 
 export function ActionCreateTranscript() {
     const [open, setOpen] = useState(false);
     const [transcript, setTranscript] = useState(
-        structuredClone(dummyTranscript)
+        structuredClone(initialTranscript)
     );
 
     const updateEntry = (
@@ -78,7 +67,7 @@ export function ActionCreateTranscript() {
     };
 
     const handleCancel = () => {
-        setTranscript(structuredClone(dummyTranscript));
+        setTranscript(structuredClone(initialTranscript));
         setOpen(false);
     };
 
@@ -93,7 +82,8 @@ export function ActionCreateTranscript() {
                 </DialogTrigger>
                 <DialogContent className="!w-[60vw] !max-w-[60vw]">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl">
+                        <DialogTitle className="flex gap-3 items-center text-2xl font-semibold">
+                            <PlusCircle className="w-4 h-4 mr-1" />
                             Create Transcript
                         </DialogTitle>
                         <Separator />
@@ -114,7 +104,6 @@ export function ActionCreateTranscript() {
                                 }
                             />
                         </div>
-
                         <div>
                             <strong>GPA:</strong>{" "}
                             {calculateGpa(transcript.transcriptData)}
@@ -138,7 +127,8 @@ export function ActionCreateTranscript() {
                                 </Button>
                             </div>
                         </div>
-
+                    </div>
+                    <DialogFooter>
                         <div className="flex justify-end gap-2 pt-4">
                             <Button variant="outline" onClick={handleCancel}>
                                 Cancel
@@ -147,7 +137,7 @@ export function ActionCreateTranscript() {
                                 Confirm
                             </Button>
                         </div>
-                    </div>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>

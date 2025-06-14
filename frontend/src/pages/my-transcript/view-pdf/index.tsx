@@ -15,7 +15,7 @@ export function ViewPdf() {
 
     return (
         <div className="p-10">
-            <h1 className="py-5 text-2xl">PDF Viewer</h1>
+            <h1 className="py-5 text-2xl font-semibold">PDF Viewer</h1>
             <iframe
                 src={pdfUrl}
                 width="100%"
