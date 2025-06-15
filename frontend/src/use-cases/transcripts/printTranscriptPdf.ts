@@ -8,7 +8,6 @@ export function printTranscriptPdf(
     data: TranscriptWithStudent,
     encryptionKey?: string
 ): void {
-    // TODO @Genvictus: encrypt with RC4!!!
     const { gpa, totalCredits } = calculateGpa(data.transcriptData);
 
     const doc = new jsPDF();
@@ -66,7 +65,7 @@ export function printTranscriptPdf(
     const boxX = leftMargin;
     const boxY = finalY + 5;
     const boxWidth = usableWidth;
-    const boxHeight = 30;
+    const boxHeight = 35;
 
     doc.setDrawColor(0);
     doc.setLineWidth(0.3);
@@ -75,23 +74,26 @@ export function printTranscriptPdf(
     doc.setFontSize(10);
     doc.setFont("courier", "bold");
     if (data.hodDigitalSignature) {
-        doc.text(data.hodDigitalSignature, boxX + 5, boxY + 5);
+        const wrappedSignature = doc.splitTextToSize(
+            data.hodDigitalSignature,
+            boxWidth - 10
+        );
+
+        doc.text(wrappedSignature, boxX + 5, boxY + 5);
     }
 
     if (encryptionKey && encryptionKey !== "") {
-        console.log("Print encrypted version of pdf")
-        const bytesBuffer = new Uint8Array(doc.output("arraybuffer"))
+        console.log("Print encrypted version of pdf");
+        const bytesBuffer = new Uint8Array(doc.output("arraybuffer"));
         const encryptedBuffer = new RC4(encryptionKey).encrypt(bytesBuffer);
 
         const blob = new Blob([encryptedBuffer]);
-
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = `transcript_${data.studentId}.pdf`;
         link.click();
     } else {
-        console.log("Print unencrypted version of")
+        console.log("Print unencrypted version of pdf");
         doc.save(`transcript_${data.studentId}.pdf`);
     }
-
 }
