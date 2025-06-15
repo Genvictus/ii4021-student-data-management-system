@@ -2,6 +2,7 @@ package com.std_data_mgmt.app.controllers;
 
 import com.std_data_mgmt.app.dtos.TranscriptAccessInquiryApprovalDto;
 import com.std_data_mgmt.app.dtos.TranscriptAccessInquiryDto;
+import com.std_data_mgmt.app.dtos.TranscriptIdDto;
 import com.std_data_mgmt.app.entities.TranscriptAccessInquiry;
 import com.std_data_mgmt.app.enums.Role;
 import com.std_data_mgmt.app.security.jwt.AuthenticatedUserInfo;
@@ -28,14 +29,14 @@ public class TranscriptAccessInquiryController {
     @RequiresRole(value = { Role.SUPERVISOR, Role.HOD })
     @PostMapping()
     public FormattedResponseEntity<TranscriptAccessInquiryDto> createTranscriptAccessInquiry(
-            @RequestBody String transcriptId,
+            @RequestBody TranscriptIdDto transcriptId,
             @AuthenticationPrincipal AuthenticatedUserInfo userInfo) {
         // TODO: change request body with a separate DTO instead of raw string
         var userId = userInfo.getUserId();
         var departmentId = userInfo.getDepartmentId();
 
         var transcriptAccessInquiry = this.transcriptService.createTranscriptAccessInquiry(
-                transcriptId,
+                transcriptId.getTranscriptId(),
                 userId,
                 departmentId).toDto();
         return new FormattedResponseEntity<>(HttpStatus.OK, true, "ok", transcriptAccessInquiry);

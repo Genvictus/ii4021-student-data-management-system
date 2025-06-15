@@ -8,7 +8,7 @@ export async function createTranscriptAccessInquiry(
     try {
         const response = await api.post<ResponseFormat<null>>(
             "/api/v1/transcripts/access-inquiries",
-            transcriptId
+            { transcriptId: transcriptId }
         );
 
         return response.data;
