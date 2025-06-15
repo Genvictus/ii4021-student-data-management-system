@@ -25,3 +25,7 @@ export type GetEncryptedStudentTranscriptsResponse = ResponseFormat<
 export type GetEncryptedStudentTranscriptResponse = ResponseFormat<
     EncryptedTranscriptWithStudent
 >;
+
+export type SignaturePayload = {
+    signature: string
+}

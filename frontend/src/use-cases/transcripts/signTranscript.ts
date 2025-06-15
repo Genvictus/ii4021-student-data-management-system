@@ -2,10 +2,9 @@ import api from "@/axios";
 import { getUserProfile } from "@/lib/getUserProfile";
 import { sha3Digest, sign } from "@/lib/rsa";
 import { getPrivateKey } from "@/private-key-store/opfs";
-import type { TranscriptSignPayload } from "@/types/TranscriptPayload";
+import type { SignaturePayload, TranscriptSignPayload } from "@/types/TranscriptPayload";
 import type { ResponseFormat } from "@/use-cases/response";
 import axios from "axios";
-import { encryptTranscriptEntriesFromKeyString } from "./util";
 
 export async function signTranscript(
     transcript: TranscriptSignPayload
@@ -18,8 +17,8 @@ export async function signTranscript(
         const signature = sign(digest, selfPK);
         const signatureString = signature.toString(16);
 
-        // TODO
-        const response = await api.patch(`/api/v1/transcripts/${transcript.transcriptId}/signature`, signatureString);
+        const payload: SignaturePayload = { signature: signatureString }
+        const response = await api.patch(`/api/v1/transcripts/${transcript.transcriptId}/signature`, payload);
 
         return {
             success: true,

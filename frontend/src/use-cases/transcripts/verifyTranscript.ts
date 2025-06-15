@@ -26,11 +26,10 @@ export async function verifyTranscript(transcript: TranscriptSignPayload & { hod
             hodPK = await getHodPublicKey(transcript.hodId)
         }
 
-        const selfPK = (await getPrivateKey(getUserProfile()!.email))!;
-
-        const encryptedEntries = encryptTranscriptEntriesFromKeyString(transcript, selfPK);
-        const localDigest = sha3Digest(encryptedEntries);
-        const result = verify(localDigest, hodPK, new BN(transcript.hodDigitalSignature, 16));
+        const transcriptEntryString = JSON.stringify(transcript.transcriptData);
+        const digest = sha3Digest(transcriptEntryString);
+        const signature = new BN(transcript.hodDigitalSignature, "hex");
+        const result = verify(digest, hodPK, signature);
 
         return {
             success: true,

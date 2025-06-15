@@ -12,14 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.std_data_mgmt.app.dtos.TranscriptUpdateDto;
+import com.std_data_mgmt.app.dtos.SignatureDto;
 import com.std_data_mgmt.app.dtos.TranscriptDto;
+import com.std_data_mgmt.app.dtos.TranscriptUpdateDto;
 import com.std_data_mgmt.app.entities.Transcript;
 import com.std_data_mgmt.app.enums.Role;
-import com.std_data_mgmt.app.exceptions.ForbiddenException;
 import com.std_data_mgmt.app.security.jwt.AuthenticatedUserInfo;
 import com.std_data_mgmt.app.security.rbac.RequiresRole;
 import com.std_data_mgmt.app.services.TranscriptService;
@@ -140,10 +139,8 @@ public class TranscriptController {
         @PatchMapping("/{id}/signature")
         public FormattedResponseEntity<Object> updateSignature(
                         @PathVariable("id") String id,
-                        @RequestBody String signature // TODO: make a DTO for this request so that signature will be in
-        // request body instead
-        ) {
-                this.transcriptService.signTranscript(id, signature);
+                        @RequestBody SignatureDto signature) {
+                this.transcriptService.signTranscript(id, signature.getSignature());
                 return new FormattedResponseEntity<>(HttpStatus.OK, true, "ok", null);
         }
 }
