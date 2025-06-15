@@ -56,8 +56,6 @@ public class TranscriptService {
         hodProbe.setRole(Role.HOD);
         User hod = this.userRepository.findOne(Example.of(hodProbe)).get();
 
-        // TODO: check bug hod id not updated
-        logger.info(String.format("hod Id probed %s", hod.getUserId()));
         transcript.setTranscriptStatus(TranscriptStatus.PENDING);
         transcript.setHodId(hod.getUserId());
         transcript.setHodDigitalSignature(null);
@@ -80,6 +78,7 @@ public class TranscriptService {
     }
 
     public void updateTranscript(Transcript transcript) {
+        this.logger.info(transcript.toString());
         // Ensure that the sign property cannot be updated, so transcript.signature must
         // be null when the transcript is updated
         if (transcript.getHodDigitalSignature() != null) {
@@ -93,6 +92,8 @@ public class TranscriptService {
             t.setTranscriptStatus(TranscriptStatus.PENDING);
             t.setEncryptedTranscriptData(transcript.getEncryptedTranscriptData());
             t.setHodDigitalSignature(null);
+
+            logger.info(t.getEncryptedTranscriptData());
             this.transcriptRepository.save(t);
         }, () -> {
             throw new IllegalArgumentException(format("Transcript with ID %s does not exist", transcriptId));

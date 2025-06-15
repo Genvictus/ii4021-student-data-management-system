@@ -1,17 +1,14 @@
 package com.std_data_mgmt.app.dtos;
 
-import java.util.List;
-
 import com.std_data_mgmt.app.entities.Transcript;
-import com.std_data_mgmt.app.entities.TranscriptEntry;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class TranscriptUpdateDto {
+    private String transcriptId;
     private String studentId;
     private String encryptedTranscriptData;
 
@@ -23,6 +20,7 @@ public class TranscriptUpdateDto {
 
     public Transcript toTranscript() {
         Transcript transcript = new Transcript();
+        transcript.setTranscriptId(transcriptId);
         transcript.setStudentId(studentId);
         transcript.setEncryptedTranscriptData(encryptedTranscriptData);
         transcript.setEncryptedKeyStudent(encryptedKeyStudent);

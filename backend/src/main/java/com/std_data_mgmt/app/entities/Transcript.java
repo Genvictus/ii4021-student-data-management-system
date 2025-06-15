@@ -62,11 +62,11 @@ public class Transcript {
 
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hod_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "hod_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User headOfDepartment;
 
     @NonNull
-    @Column(name = "hod_id", insertable = false, updatable = false)
+    @Column(name = "hod_id")
     private String hodId;
 
     @Lob

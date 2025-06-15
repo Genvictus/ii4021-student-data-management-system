@@ -1,5 +1,5 @@
 import type { ResponseFormat } from "../response";
-import type { EncryptedTranscriptWithStudent } from "@/types/EncryptedTranscriptWithStudent";
+import type { EncryptedTranscriptWithStudent } from "@/types/TranscriptWithStudent";
 
 export type GetStudentTranscriptByIdResponse =
     ResponseFormat<EncryptedTranscriptWithStudent>;

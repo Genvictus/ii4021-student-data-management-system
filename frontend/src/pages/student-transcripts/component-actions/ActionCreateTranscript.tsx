@@ -16,7 +16,7 @@ import { type TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { TranscriptCourseEditTable } from "./TranscriptCourseEditTable";
 import { createStudentTranscript } from "@/use-cases/transcripts/createStudentTranscript";
 import type { ResponseFormat } from "@/use-cases/response";
-import type { EncryptedTranscriptWithStudent } from "@/types/EncryptedTranscriptWithStudent";
+import type { EncryptedTranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { toast } from "sonner";
 
 type TranscriptInput = Pick<

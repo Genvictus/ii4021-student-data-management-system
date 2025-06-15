@@ -74,4 +74,7 @@ export function printTranscriptPdf(
     doc.text(data.hodDigitalSignature, boxX + 5, boxY + 5);
 
     doc.save(`transcript_${data.studentId}.pdf`);
+
+    const bytesBuffer = new Uint8Array(doc.output("arraybuffer"))
+
 }

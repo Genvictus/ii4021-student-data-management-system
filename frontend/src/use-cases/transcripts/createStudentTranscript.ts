@@ -3,12 +3,12 @@ import { aesKeyToString, generateAesKey } from "@/lib/aes";
 import { stringToBN } from "@/lib/converter";
 import { getUserProfile } from "@/lib/getUserProfile";
 import { stringToPublicKey, type RsaPublicKey } from "@/lib/rsa";
-import type { TranscriptUpdatePayload } from "@/types/TranscriptPayload";
+import type { GetEncryptedStudentTranscriptResponse, TranscriptUpdatePayload } from "@/types/TranscriptPayload";
+import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
+import type { UserProfile } from "@/types/UserProfile";
 import type { ResponseFormat } from "@/use-cases/response";
 import axios from "axios";
 import { encryptKeys, encryptTranscriptEntries, toPayload } from "./util";
-import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
-import type { UserProfile } from "@/types/UserProfile";
 
 type TranscriptCreationPayload = Pick<
     TranscriptWithStudent,
@@ -48,7 +48,7 @@ async function encryptDataAndKeys(
     const payload = toPayload({ ...transcript, encryptedKey: "" });
 
     payload.encryptedTranscriptData = encryptTranscriptEntries(
-        transcript.transcriptData!,
+        transcript.transcriptData,
         aesKey
     );
     payload.encryptedKeyHod = encryptKeys(aesKeyBN, hodPK);
@@ -61,7 +61,7 @@ async function encryptDataAndKeys(
 export async function createStudentTranscript(
     transcript: TranscriptCreationPayload,
     encryptionKey: string
-): Promise<ResponseFormat<string[] | null>> {
+): Promise<ResponseFormat<TranscriptWithStudent>> {
     try {
         const processedPayload = await encryptDataAndKeys(
             transcript,
@@ -69,17 +69,17 @@ export async function createStudentTranscript(
         );
 
         console.log("transcript payload:", processedPayload);
-        const response = await api.post(
-            "/api/v1/transcripts",
-            processedPayload
-        );
+        const response = await api.post<GetEncryptedStudentTranscriptResponse>("/api/v1/transcripts", processedPayload);
 
-        console.log(response.data.data);
+        const createdTranscript = response.data.data!
 
         return {
             success: true,
             message: response.data.message,
-            data: null,
+            data: {
+                ...createdTranscript,
+                transcriptData: transcript.transcriptData
+            },
         };
     } catch (error) {
         console.error(error);

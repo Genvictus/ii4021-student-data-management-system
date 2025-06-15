@@ -29,16 +29,19 @@ export function decryptTranscriptEntries(entries: string, key: AESKey): Transcri
     return JSON.parse(decryptedString);
 }
 
+export function encryptTranscriptEntriesFromKeyString(transcript: Pick<TranscriptWithStudent, "transcriptData" | "encryptedKey">, selfPK: RsaPrivateKey) {
+    const keyString = BNToString(decryptKeys(transcript.encryptedKey, selfPK));
+    const key = aesKeyFromString(keyString);
+    return encryptTranscriptEntries(transcript.transcriptData, key);
+}
+
 export function toPayload(transcript: Pick<
     TranscriptWithStudent,
     "studentId" | "transcriptData" | "encryptedKey"
 >, selfPK?: RsaPrivateKey): TranscriptUpdatePayload {
-    let transcriptData = "";
-    if (selfPK) {
-        const keyString = BNToString(decryptKeys(transcript.encryptedKey, selfPK))
-        const key = aesKeyFromString(keyString)
-        transcriptData = encryptTranscriptEntries(transcript.transcriptData, key)
-    }
+    let transcriptData = selfPK ?
+        encryptTranscriptEntriesFromKeyString(transcript, selfPK) : "";
+    console.log
     return {
         ...transcript,
         encryptedTranscriptData: transcriptData,

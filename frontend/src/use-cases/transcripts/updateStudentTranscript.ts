@@ -19,7 +19,7 @@ async function encryptDataAndKeys(
 
 export async function updateStudentTranscript(transcript: TranscriptWithStudent): Promise<ResponseFormat<string[] | null>> {
     try {
-        const processedPayload = encryptDataAndKeys(transcript);
+        const processedPayload = await encryptDataAndKeys(transcript);
 
         const response = await api.put(`/api/v1/transcripts/${transcript.transcriptId}`, processedPayload);
 

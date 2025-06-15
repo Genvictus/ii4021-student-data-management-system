@@ -24,3 +24,10 @@ export type TranscriptEntry = {
     credits: number;
     score: "A" | "AB" | "B" | "BC" | "C" | "D" | "E";
 };
+
+export type EncryptedTranscriptWithStudent = Omit<
+    TranscriptWithStudent, "transcriptData"
+> & {
+    encryptedTranscriptData: string;
+};
+
