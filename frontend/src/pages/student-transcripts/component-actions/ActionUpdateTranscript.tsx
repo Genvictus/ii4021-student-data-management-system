@@ -57,7 +57,10 @@ export function ActionUpdateTranscript(props: TranscriptActionsProps) {
     };
 
     const handleConfirm = async () => {
-        const response = await updateStudentTranscript(transcript);
+        const response = await updateStudentTranscript({
+            ...transcript,
+            transcriptData: data,
+        });
 
         if (response.success) {
             toast.success("Successfully updated transcript");
