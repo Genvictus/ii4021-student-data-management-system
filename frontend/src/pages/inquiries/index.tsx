@@ -2,13 +2,13 @@ import { useLoaderData } from "@tanstack/react-router";
 import { InquiriesTable } from "./InquiriesTable";
 import {
     getTranscriptAccessInquiries,
-    type GetTranscriptAccessInquiryResponse,
+    type GetTranscriptAccessInquiriesResponse,
 } from "@/use-cases/transcripts/inquiries/getTranscriptAccessInquiries";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TriangleAlert } from "lucide-react";
 import { ActionCreateInquiry } from "./component-actions/ActionCreateInquiry";
 
-export async function inquiriesLoader(): Promise<GetTranscriptAccessInquiryResponse> {
+export async function inquiriesLoader(): Promise<GetTranscriptAccessInquiriesResponse> {
     return await getTranscriptAccessInquiries();
 }
 

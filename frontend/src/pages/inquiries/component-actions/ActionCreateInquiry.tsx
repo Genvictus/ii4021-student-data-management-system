@@ -12,6 +12,8 @@ import { CheckCircle2, PlusCircle, Search, XCircle } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { getStudentTranscriptId } from "@/pages/student-transcripts/getStudentTranscriptId";
+import { createTranscriptAccessInquiry } from "@/use-cases/transcripts/inquiries/createTranscriptAccessInquiry";
+import { toast } from "sonner";
 
 export function ActionCreateInquiry() {
     const [open, setOpen] = useState(false);
@@ -51,9 +53,16 @@ export function ActionCreateInquiry() {
         setLoading(false);
     };
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         if (!transcriptId) return;
-        console.log(`Creating inquiry for transcript: ${transcriptId}`);
+        const response = await createTranscriptAccessInquiry(transcriptId);
+        if (response.success) {
+            toast.success("Successfully created transcript access inquiry");
+        } else {
+            toast.error("Failed to create transcript access inquiry", {
+                description: response.message ?? undefined,
+            });
+        }
         setOpen(false);
     };
 

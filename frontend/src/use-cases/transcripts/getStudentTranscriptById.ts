@@ -1,5 +1,7 @@
+import api from "@/axios";
 import type { ResponseFormat } from "../response";
 import type { EncryptedTranscriptWithStudent } from "@/types/TranscriptWithStudent";
+import axios from "axios";
 
 export type GetStudentTranscriptByIdResponse =
     ResponseFormat<EncryptedTranscriptWithStudent>;
@@ -7,12 +9,24 @@ export type GetStudentTranscriptByIdResponse =
 export async function getStudentTranscriptById(
     id: string
 ): Promise<GetStudentTranscriptByIdResponse> {
-    // TODO: @Genvictus
-    return {
-        success: true,
-        message: "Successfully get student transcript by ID",
-        data: dummyData,
-    };
+    try {
+        const response = await api.get<GetStudentTranscriptByIdResponse>(
+            `/api/v1/transcripts/${id}`
+        );
+        const data = response.data;
+
+        return data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            return error.response.data;
+        }
+
+        return {
+            success: false,
+            message: "An unexpected error occurred",
+            data: null,
+        };
+    }
 }
 
 const dummyData: EncryptedTranscriptWithStudent = {

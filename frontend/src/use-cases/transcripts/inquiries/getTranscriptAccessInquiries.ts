@@ -1,5 +1,31 @@
+import api from "@/axios";
 import type { TranscriptAccessInquiry } from "@/types/TranscriptAccessInquiry";
 import type { ResponseFormat } from "@/use-cases/response";
+import axios from "axios";
+
+export type GetTranscriptAccessInquiriesResponse = ResponseFormat<
+    TranscriptAccessInquiry[] | null
+>;
+export async function getTranscriptAccessInquiries(): Promise<GetTranscriptAccessInquiriesResponse> {
+    try {
+        const response = await api.get<GetTranscriptAccessInquiriesResponse>(
+            `/api/v1/transcripts/access-inquiries`
+        );
+        const data = response.data;
+
+        return data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            return error.response.data;
+        }
+
+        return {
+            success: false,
+            message: "An unexpected error occurred",
+            data: null,
+        };
+    }
+}
 
 export const dummyData: TranscriptAccessInquiry[] = [
     // WAITING_FOR_PARTICIPANTS
@@ -170,14 +196,3 @@ export const dummyData: TranscriptAccessInquiry[] = [
         participants: [{ id: "supervisor-037", encryptedShare: "enc-031" }],
     },
 ];
-
-export type GetTranscriptAccessInquiryResponse = ResponseFormat<
-    TranscriptAccessInquiry[] | null
->;
-export async function getTranscriptAccessInquiries(): Promise<GetTranscriptAccessInquiryResponse> {
-    return {
-        success: true,
-        message: "OK",
-        data: dummyData,
-    };
-}
