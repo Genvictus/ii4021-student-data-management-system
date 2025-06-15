@@ -75,9 +75,9 @@ export function ActionCreateTranscript() {
         );
 
         if (response.success) {
-            toast.success("Successfully approved inquiry");
+            toast.success("Successfully create transcript");
         } else {
-            let errorMsg = "Failed to approve inquiry";
+            let errorMsg = "Failed to create transcript";
             toast.error(errorMsg, {
                 description: response.message ?? undefined,
             });

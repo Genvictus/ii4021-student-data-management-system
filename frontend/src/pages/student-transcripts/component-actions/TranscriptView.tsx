@@ -12,6 +12,8 @@ import { Card } from "@/components/ui/card";
 import { ProfileItem } from "@/pages/home/ProfileItem";
 import { User, GraduationCap, BadgeCheck, IdCard } from "lucide-react";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { verifyTranscript } from "@/use-cases/transcripts/verifyTranscript";
+import { useEffect, useState } from "react";
 
 interface TranscriptViewProps {
     transcript: TranscriptWithStudent;
@@ -44,6 +46,21 @@ interface TranscriptViewCardProps {
 
 export function TranscriptViewCard(props: TranscriptViewCardProps) {
     const { transcript } = props;
+    const [verificationStatus, setVerifivationStatus] = useState<
+        "VERIFIED" | "UNVERIFIED"
+    >("UNVERIFIED");
+
+    const getTranscriptVerificationStatus = async () => {
+        const response = await verifyTranscript(transcript);
+
+        if (response.success && response.data) {
+            setVerifivationStatus("VERIFIED");
+        }
+    };
+
+    useEffect(() => {
+        getTranscriptVerificationStatus();
+    }, [transcript]);
 
     return (
         <Card className="flex-1 shadow-xl border p-4 w-sm">
@@ -66,6 +83,11 @@ export function TranscriptViewCard(props: TranscriptViewCardProps) {
                 icon={BadgeCheck}
                 label="Transcript Status"
                 value={<StatusBadge status={transcript.transcriptStatus} />}
+            />
+            <ProfileItem
+                icon={BadgeCheck}
+                label="Verification Status"
+                value={<StatusBadge status={verificationStatus} />}
             />
         </Card>
     );

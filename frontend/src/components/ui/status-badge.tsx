@@ -7,7 +7,11 @@ interface StatusBadgeProps {
 export function StatusBadge(props: StatusBadgeProps) {
     const { status } = props;
 
-    if (status === "REJECTED" || status === "CLOSED") {
+    if (
+        status === "REJECTED" ||
+        status === "CLOSED" ||
+        status === "UNVERIFIED"
+    ) {
         return (
             <Badge className="text-red-500 bg-red-500/30 hover:bg-red-500/50">
                 {status}
@@ -15,7 +19,7 @@ export function StatusBadge(props: StatusBadgeProps) {
         );
     }
 
-    if (status === "APPROVED") {
+    if (status === "APPROVED" || status === "VERIFIED") {
         return (
             <Badge className="text-green-400 bg-green-400/30 hover:bg-green-400/50">
                 {status}
