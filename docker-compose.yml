@@ -1,6 +1,6 @@
 services:
   frontend-dev:
-    profiles: ["dev-light"]
+    profiles: [ "dev-light" ]
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
@@ -12,6 +12,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    depends_on:
+      - backend-dev-light
 
   backend-dev-light:
     profiles: [ "dev-light" ]
@@ -96,6 +98,6 @@ networks:
     ipam:
       config:
         - subnet: 172.16.100.0/24
-    internal: true
+    internal: false
     # driver_opts:
     #   com.docker.network.bridge.gateway_mode_ipv4: isolated

@@ -11,6 +11,7 @@ import {
 import { CheckCircle2, PlusCircle, Search, XCircle } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
+import { getStudentTranscriptId } from "@/pages/student-transcripts/getStudentTranscriptId";
 
 export function ActionCreateInquiry() {
     const [open, setOpen] = useState(false);
@@ -38,10 +39,15 @@ export function ActionCreateInquiry() {
         setError(null);
         setTranscriptId(null);
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const response = await getStudentTranscriptId(studentId);
 
-        const mockTranscriptId = `T-${studentId.toUpperCase()}`;
-        setTranscriptId(mockTranscriptId);
+        if (response.success && response.data) {
+            setTranscriptId(response.data);
+        } else {
+            setError(
+                response.message ?? "Couldn't find student's transcript ID"
+            );
+        }
         setLoading(false);
     };
 

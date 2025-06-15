@@ -29,6 +29,7 @@ import { setPrivateKey } from "@/private-key-store/opfs";
 import { register } from "@/use-cases/auth/register";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import { Separator } from "@/components/ui/separator";
 
 export function RegisterForm() {
     const [formData, setFormData] = useState({
@@ -39,6 +40,7 @@ export function RegisterForm() {
         confirmPassword: "",
         role: "",
         departmentId: "",
+        supervisorId: "",
     });
     const [isLoading, setIsLoading] = useState(false);
 
@@ -49,7 +51,8 @@ export function RegisterForm() {
         !formData.password ||
         !formData.confirmPassword ||
         !formData.role ||
-        !formData.departmentId;
+        !formData.departmentId ||
+        (formData.role === "STUDENT" && !formData.supervisorId);
 
     const navigate = useNavigate();
 
@@ -110,108 +113,144 @@ export function RegisterForm() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <Card className="w-[350px]">
+            <Card className="w-[60vw]">
                 <CardHeader>
                     <CardTitle>Register to TransCrypt</CardTitle>
                     <CardDescription>Your transcript encrypted</CardDescription>
                 </CardHeader>
+
                 <CardContent>
-                    <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="userId">User ID</Label>
-                            <Input
-                                id="userId"
-                                placeholder="Your NIM/NIP"
-                                onChange={handleChange}
-                            />
+                    <div className="flex gap-6">
+                        {/* LEFT SIDE */}
+                        <div className="flex-1 space-y-4">
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="userId">User ID</Label>
+                                <Input
+                                    id="userId"
+                                    placeholder="Your NIM/NIP"
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="fullName">Full Name</Label>
+                                <Input
+                                    id="fullName"
+                                    placeholder="Your Full Name"
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="password">Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Your password"
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="confirmPassword">
+                                    Confirm Password
+                                </Label>
+                                <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    placeholder="Your password"
+                                    onChange={handleChange}
+                                />
+                            </div>
                         </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="fullName">Full Name</Label>
-                            <Input
-                                id="fullName"
-                                placeholder="Your Full Name"
-                                onChange={handleChange}
-                            />
+
+                        {/* VERTICAL SEPARATOR */}
+                        <Separator orientation="vertical" className="h-auto" />
+
+                        {/* RIGHT SIDE */}
+                        <div className="flex-1 space-y-4">
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                    id="email"
+                                    placeholder="Your email"
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="role">Role</Label>
+                                <Select
+                                    onValueChange={(value) =>
+                                        handleFieldChange("role", value)
+                                    }
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Your role" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="STUDENT">
+                                                Student
+                                            </SelectItem>
+                                            <SelectItem value="SUPERVISOR">
+                                                Supervisor
+                                            </SelectItem>
+                                            <SelectItem value="HOD">
+                                                Head of Department
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {formData.role === "STUDENT" && (
+                                <div className="flex flex-col space-y-1.5">
+                                    <Label htmlFor="supervisorId">
+                                        Supervisor ID
+                                    </Label>
+                                    <Input
+                                        id="supervisorId"
+                                        placeholder="Your supervisor ID"
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            )}
+
+                            <div className="flex flex-col space-y-1.5">
+                                <Label htmlFor="departmentId">
+                                    Department ID
+                                </Label>
+                                <Select
+                                    onValueChange={(value) =>
+                                        handleFieldChange("departmentId", value)
+                                    }
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Your department ID" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="135">
+                                                135
+                                            </SelectItem>
+                                            <SelectItem value="182">
+                                                182
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="text-xs mt-4">
+                                Already have an account?{" "}
+                                <a
+                                    href="/login"
+                                    className="text-blue-500 underline"
+                                >
+                                    Login
+                                </a>
+                            </div>
                         </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                placeholder="Your email"
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="Your password"
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="confirmPassword">
-                                Confirm Password
-                            </Label>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                placeholder="Your password"
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="role">Role</Label>
-                            <Select
-                                onValueChange={(value) =>
-                                    handleFieldChange("role", value)
-                                }
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Your role" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value="STUDENT">
-                                            Student
-                                        </SelectItem>
-                                        <SelectItem value="SUPERVISOR">
-                                            Supervisor
-                                        </SelectItem>
-                                        <SelectItem value="HOD">
-                                            Head of Department
-                                        </SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="departmentId">Department ID</Label>
-                            <Select
-                                onValueChange={(value) =>
-                                    handleFieldChange("departmentId", value)
-                                }
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Your department ID" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value="135">135</SelectItem>
-                                        <SelectItem value="182">182</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    <div className="mt-2 text-xs">
-                        Already have an account?{" "}
-                        <a href="/login" className="text-blue-500 underline">
-                            Login
-                        </a>
                     </div>
                 </CardContent>
+
                 <CardFooter>
                     <Button
                         className="w-full"

@@ -13,19 +13,24 @@ import type { UserProfile } from "@/types/UserProfile";
 type TranscriptCreationPayload = Pick<
     TranscriptWithStudent,
     "studentId" | "transcriptData"
->
+>;
 
-type UserResponse = Omit<UserProfile, "publicKey"> & { publicKey: string }
+type UserResponse = Omit<UserProfile, "publicKey"> & { publicKey: string };
 
 async function getHodPublicKey(departmentId: string): Promise<RsaPublicKey> {
-    const response = await api.get<ResponseFormat<UserResponse[]>>("api/v1/users", {
-        params: { departmentId: departmentId, role: "HOD" },
-    });
+    const response = await api.get<ResponseFormat<UserResponse[]>>(
+        "api/v1/users",
+        {
+            params: { departmentId: departmentId, role: "HOD" },
+        }
+    );
     return stringToPublicKey(response.data.data![0].publicKey);
 }
 
 async function getStudentPublicKey(studentId: string): Promise<RsaPublicKey> {
-    const response = await api.get<ResponseFormat<UserResponse>>(`api/v1/users/${studentId}`);
+    const response = await api.get<ResponseFormat<UserResponse>>(
+        `api/v1/users/${studentId}`
+    );
     return stringToPublicKey(response.data.data!.publicKey);
 }
 
@@ -53,21 +58,21 @@ async function encryptDataAndKeys(
     return payload;
 }
 
-// TODO: @Genvictus
-// 1. Ini bagusnya transcript type nya diganti jadi Pick<TranscriptWithStudent, "studentId" | "transcriptData">
-// Karena transcriptId kan belum ada pas datanya dibikin, dan transcript.student juga gaperlu dimasukin (cuma perlu studentId).
-// Please refer to src/pages/student-transcripts/component-actions/ActionCreateTranscript.tsx
-// 2. Kenapa ini returnnya <ResponseFormat<string[] | null> ???
-// Fix ASAP
 export async function createStudentTranscript(
     transcript: TranscriptCreationPayload,
     encryptionKey: string
 ): Promise<ResponseFormat<string[] | null>> {
     try {
-        const processedPayload = await encryptDataAndKeys(transcript, encryptionKey);
+        const processedPayload = await encryptDataAndKeys(
+            transcript,
+            encryptionKey
+        );
 
         console.log("transcript payload:", processedPayload);
-        const response = await api.post("/api/v1/transcripts", processedPayload);
+        const response = await api.post(
+            "/api/v1/transcripts",
+            processedPayload
+        );
 
         console.log(response.data.data);
 
