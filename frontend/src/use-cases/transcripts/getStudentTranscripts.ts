@@ -40,8 +40,6 @@ export async function getStudentTranscripts(): Promise<GetStudentTranscriptsResp
         );
         const data = response.data.data;
 
-        console.log(data)
-
         return {
             success: true,
             message: response.data.message,

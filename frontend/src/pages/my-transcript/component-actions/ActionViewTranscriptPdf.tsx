@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { File, Eye } from "lucide-react";
+import { File as ReactFile, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -12,10 +12,17 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "@tanstack/react-router";
+import { RC4 } from "@/lib/rc4";
 
-function createPdfUrl(file: File, decrypt: boolean, key: string | null) {
+async function createPdfUrl(file: File, decrypt: boolean, key: string | null) {
     console.log("Showing PDF", { file, decrypt, key });
     // You can handle decryption logic here if needed
+    if (decrypt) {
+        const buffer = await file.bytes();
+        const decrypted = new RC4(key!).decrypt(buffer);
+
+        file = new File([decrypted], file.name);
+    }
     return URL.createObjectURL(file);
 }
 
@@ -45,10 +52,10 @@ export function ActionViewTranscriptPdf() {
         setPdfUrl(null);
     };
 
-    const handleViewPdf = () => {
+    const handleViewPdf = async () => {
         if (!pdfFile) return;
 
-        const url = createPdfUrl(
+        const url = await createPdfUrl(
             pdfFile,
             decryptPdf,
             decryptPdf ? decryptionKey : null
@@ -67,7 +74,7 @@ export function ActionViewTranscriptPdf() {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="secondary" className="mt-5" size="lg">
-                    <File className="w-4 h-4 mr-1" />
+                    <ReactFile className="w-4 h-4 mr-1" />
                     View PDF
                 </Button>
             </DialogTrigger>

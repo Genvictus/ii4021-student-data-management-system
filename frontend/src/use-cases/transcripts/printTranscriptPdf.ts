@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { TranscriptWithStudent } from "@/types/TranscriptWithStudent";
 import { calculateGpa } from "@/lib/calculateGpa";
+import { RC4 } from "@/lib/rc4";
 
 export function printTranscriptPdf(
     data: TranscriptWithStudent,
@@ -54,11 +55,13 @@ export function printTranscriptPdf(
     const finalY = (doc as any).lastAutoTable.finalY + 10;
 
     doc.setFontSize(11);
-    doc.text(
-        `Signed by Head of Department (ID: ${data.hodId})`,
-        leftMargin,
-        finalY
-    );
+    if (data.hodDigitalSignature) {
+        doc.text(
+            `Signed by Head of Department (ID: ${data.hodId})`,
+            leftMargin,
+            finalY
+        );
+    }
 
     const boxX = leftMargin;
     const boxY = finalY + 5;
@@ -71,10 +74,24 @@ export function printTranscriptPdf(
 
     doc.setFontSize(10);
     doc.setFont("courier", "bold");
-    doc.text(data.hodDigitalSignature, boxX + 5, boxY + 5);
+    if (data.hodDigitalSignature) {
+        doc.text(data.hodDigitalSignature, boxX + 5, boxY + 5);
+    }
 
-    doc.save(`transcript_${data.studentId}.pdf`);
+    if (encryptionKey && encryptionKey !== "") {
+        console.log("Print encrypted version of pdf")
+        const bytesBuffer = new Uint8Array(doc.output("arraybuffer"))
+        const encryptedBuffer = new RC4(encryptionKey).encrypt(bytesBuffer);
 
-    const bytesBuffer = new Uint8Array(doc.output("arraybuffer"))
+        const blob = new Blob([encryptedBuffer]);
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `transcript_${data.studentId}.pdf`;
+        link.click();
+    } else {
+        console.log("Print unencrypted version of")
+        doc.save(`transcript_${data.studentId}.pdf`);
+    }
 
 }

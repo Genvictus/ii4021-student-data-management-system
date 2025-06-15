@@ -13,9 +13,8 @@ export async function signTranscript(
     try {
         const selfPK = (await getPrivateKey(getUserProfile()!.email))!;
 
-        const encryptedEntries = encryptTranscriptEntriesFromKeyString(transcript, selfPK);
-
-        const digest = sha3Digest(encryptedEntries);
+        const transcriptEntryString = JSON.stringify(transcript.transcriptData);
+        const digest = sha3Digest(transcriptEntryString);
         const signature = sign(digest, selfPK);
         const signatureString = signature.toString(16);
 
